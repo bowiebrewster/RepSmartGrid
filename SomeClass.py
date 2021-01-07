@@ -39,7 +39,7 @@ class District():
                     else:
                         # maak per x, y en output van elke regel een house object aan en geef deze waarden mee
                         self.houses.append(House(x, y, OC))
-    
+                    # oh yeah
     def allocate(self):
         # vul de dictionary self.connections in
         # de keys zijn al ingevuld, dat zijn alle batterij objecten
