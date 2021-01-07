@@ -55,3 +55,13 @@ class District():
         # for house in self.houses:
             # plt.scatter
         # in welke volgorde visualiseren? denk eerst handig als we een scatter van huizen en batterijen zien
+
+    def costs(self):
+        pass
+        # bereken kosten van de lengte van elke connectie tussen huis en batterij
+        # self.fixedcosts = 5000 * len(self.batteries)
+        # for battery, houses in self.connections.items():
+            # for house in houses:
+                # manhattan_distance = abs(battery.x - house.x) + abs(battery.y - house.y)
+                # self.varcosts += 9 * manhattan_distance
+        # return self.fixedcosts + self.varcosts
