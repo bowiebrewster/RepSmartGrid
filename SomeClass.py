@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import csv
 
 class House():
     def _init_(self, x, y, output):
@@ -24,14 +25,20 @@ class District():
     def load(self):
         files = [self.path + 'batteries.csv', self.path + 'houses.csv'] # de twee bestanden opslaan in lijst
         for filename in files:
-            pass # open en lees regel per regel de bestanden
-            # per regel check welke elementen de coordinaten zijn en welke de output/capacity
-            # als de lengte van een bestand klein is dan is dat het bestand van de batterijen
-                # maak per x, y en capacity van elke regel een battery object aan en geef deze waarden mee
-                # append dit batterij object aan de lijst self.batteries
-            # andere bestand is vd huizen
-                # maak per x, y en output van elke regel een house object aan en geef deze waarden mee
-                # append dit huis object aan de lijst self.houses 
+            with open(filename, 'r') as file:
+                data = file.readlines()[1:]
+                # per regel check welke elementen de coordinaten zijn en welke de output/capacity
+                for row in data:
+                    row = row.replace('"', '').split(',')
+                    x, y, OC = int(row[0]), int(row[1]), float(row[2].rstrip())
+                    # als de lengte van een bestand klein is dan is dat het bestand van de batterijen
+                    if len(data) == 5:
+                        # maak per x, y en capacity van elke regel een battery object aan en geef deze waarden mee
+                        self.batteries.append(Battery(x, y, OC))
+                    # andere bestand is vd huizen
+                    else:
+                        # maak per x, y en output van elke regel een house object aan en geef deze waarden mee
+                        self.houses.append(House(x, y, OC))
     
     def allocate(self):
         # vul de dictionary self.connections in
