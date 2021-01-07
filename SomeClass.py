@@ -13,14 +13,16 @@ class Battery():
         self.capacity = capacity
 
 class District():
-    def _init_(self):
+    def _init_(self, number):
+        self.number = number
+        self.path = f'data/district_{number}/district-{number}_'
         self.batteries = []
         self.houses = []
         self.load() # laad alle huizen en batterijen in en sla op in self.batteries en self.houses
-        connections = {battery_obj: None for battery_obj in self.batteries}
+        self.connections = {battery_obj: None for battery_obj in self.batteries}
 
     def load(self):
-        files = [] # de twee bestanden opslaan in lijst
+        files = [self.path + 'batteries.csv', self.path + 'houses.csv'] # de twee bestanden opslaan in lijst
         for filename in files:
             pass # open en lees regel per regel de bestanden
             # per regel check welke elementen de coordinaten zijn en welke de output/capacity
@@ -46,15 +48,15 @@ class District():
                 plt.plot(xsteps, ysteps)
         plt.show()
 
-    def visualise(self):
-        pass
-        # laat plot zien? of is dat al voldoende bij connect
-        # we moeten ook eigenlijk de huizen en de batterijen zelf als scatter laten zien
-        # for battery in self.batteries:
-            # plt.scatter is iets geloof ik dat je de x en y coordinaten meegeeft
-        # for house in self.houses:
-            # plt.scatter
-        # in welke volgorde visualiseren? denk eerst handig als we een scatter van huizen en batterijen zien
+    # def visualise(self):
+    #     pass
+    #     # laat plot zien? of is dat al voldoende bij connect
+    #     # we moeten ook eigenlijk de huizen en de batterijen zelf als scatter laten zien
+    #     # for battery in self.batteries:
+    #         # plt.scatter is iets geloof ik dat je de x en y coordinaten meegeeft
+    #     # for house in self.houses:
+    #         # plt.scatter
+    #     # in welke volgorde visualiseren? denk eerst handig als we een scatter van huizen en batterijen zien
 
     def costs(self):
         pass
