@@ -83,3 +83,9 @@ for r in Array3d:
     for c in r:
         print(c,end = " ")
     print()
+
+
+
+
+
+
