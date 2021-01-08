@@ -64,21 +64,20 @@ class District():
     def greedy_allocation(self, show=True):
         for battery in self.connections.keys():
             total_output = 0
-            print(self.nearest_neighbors(xbattery=battery.x, ybattery=battery.y))
+            self.set_nearest_neighbors(battery)
             while total_output <= battery.capacity:
                 pass
-                # for house in self.nearest_neighbors(xbattery=battery.x, ybattery=battery.y).keys():
-                #     if total_output + house.output < battery.capacity:
-                #         total_output += house.output
-                #         self.connections[battery] = house
         
         # if show:
         #     self.show_connections(title = 'greedy')
 
-    def nearest_neighbors(self, xbattery, ybattery):
+    def set_nearest_neighbors(self, battery):
         # finds houses that are closest by the given coordinates
-        house_locations = {house.number: (house.x, house.y) for house in self.houses}
-        
+        distances = {house.number: self.get_mhd(battery, house) for house in self.houses}
+
+
+    def get_mhd(self, battery, house):
+        return abs(battery.x - house.x) + abs(battery.y - house.y)
 
     def is_feasible(self):
         for battery, houses in self.connections.items():
