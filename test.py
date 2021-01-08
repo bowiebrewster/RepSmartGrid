@@ -2,6 +2,8 @@ import matplotlib.pyplot as plt
 import random
 import copy
 import numpy as np
+import operator
+import collections
 
 # path = f'data/district_1/district-1_'
 # files = [path + 'batteries.csv', path + 'houses.csv'] # de twee bestanden opslaan in lijst
@@ -21,5 +23,16 @@ import numpy as np
 #     connections[battery] = houses[i * 30: (i + 1) * 30]
 # print(connections)
 
-a = [i for i in range(0, 110, 10)]
-print(a)
+a = list(range(1, 151))
+houses = [(1, 1), (2, 3), (4, 10)]
+battery = (5, 6)
+distances = {}
+for house in houses:
+    manhattan_distance = abs(battery[0] - house[0]) + abs(battery[1] - house[1])
+    distances[house] = manhattan_distance
+
+sorted_dict = {}
+sorted_keys = sorted(distances, key=distances.get)
+
+for w in sorted_keys:
+    sorted_dict[w] = distances[w]

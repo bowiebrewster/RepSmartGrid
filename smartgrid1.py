@@ -59,7 +59,26 @@ class District():
             j += 1
         print("Feasible allocation found!")
         if show:
-            self.show_connections()
+            self.show_connections(title = 'random')
+
+    def greedy_allocation(self, show=True):
+        for battery in self.connections.keys():
+            total_output = 0
+            print(self.nearest_neighbors(xbattery=battery.x, ybattery=battery.y))
+            while total_output <= battery.capacity:
+                pass
+                # for house in self.nearest_neighbors(xbattery=battery.x, ybattery=battery.y).keys():
+                #     if total_output + house.output < battery.capacity:
+                #         total_output += house.output
+                #         self.connections[battery] = house
+        
+        # if show:
+        #     self.show_connections(title = 'greedy')
+
+    def nearest_neighbors(self, xbattery, ybattery):
+        # finds houses that are closest by the given coordinates
+        house_locations = {house.number: (house.x, house.y) for house in self.houses}
+        
 
     def is_feasible(self):
         for battery, houses in self.connections.items():
@@ -70,7 +89,7 @@ class District():
                 return False
         return True
     
-    def show_connections(self):
+    def show_connections(self, title):
         for battery, houses in self.connections.items():
             plt.scatter(battery.x, battery.y, c=self.colors[battery.number - 1], marker='s')
             for house in houses:
@@ -82,7 +101,7 @@ class District():
         plt.grid(which='major', color='#57838D', linestyle='-')
         plt.minorticks_on()
         plt.grid(which='minor', color='#57838D', linestyle='-', alpha=0.2)
-        plt.savefig(f'figures/random/Random allocation: €{self.costs}')
+        plt.savefig(f'figures/{title}/{title.capitalize()} allocation: €{self.costs}')
 
     def calculate_costs(self):
         total_distance = 0
@@ -93,4 +112,4 @@ class District():
 
 if __name__ == "__main__":
     district1 = District(1)
-    district1.random_allocation(show=True)
+    district1.greedy_allocation(show=True)
