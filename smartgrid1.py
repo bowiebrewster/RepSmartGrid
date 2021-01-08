@@ -75,7 +75,6 @@ class District():
         # finds houses that are closest by the given coordinates
         distances = {house.number: self.get_mhd(battery, house) for house in self.houses}
 
-
     def get_mhd(self, battery, house):
         return abs(battery.x - house.x) + abs(battery.y - house.y)
 
