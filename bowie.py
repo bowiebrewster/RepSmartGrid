@@ -14,7 +14,7 @@ with open(r"C:\Users\bowie\OneDrive\Desktop\programmeren\district-1_batteries.cs
         else:
             
             line_count += 1
-
+            
             Cor = row[0]
             Cap = row[1]
 
