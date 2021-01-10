@@ -20,6 +20,7 @@ class Battery():
         self.x = x
         self.y = y
         self.capacity = capacity
+        self.is_full = False
 
     def is_feasible(self, house):
         '''Return True if battery can take given house and subtract 
@@ -41,7 +42,7 @@ class District():
         self.batteries = []
         self.houses = []
         self.load_files()
-        self.connections = {battery_obj: None for battery_obj in self.batteries}
+        self.connections = {battery_obj: [] for battery_obj in self.batteries}
         self.all_distances = {battery: {house: self.get_mhd(battery, house) for house in self.houses} for battery in self.batteries}
 
     def load_files(self):
@@ -96,13 +97,16 @@ class District():
                 print([len(x) for x in self.connections.values()])
                 print('___________________')
                 print(f'Costs: {cost}')
-                if i == 119:
-                    self.show_connections()
+                # if i == 119:
+                self.show_connections(title='greedy')
             else:
                 print()
                 print("No feasible allocation found :(")
                 print([len(x) for x in self.connections.values()])
                 print('_____________________')
+
+            # if show:
+            #     self.show_connections(title = 'greedy')
 
             total_cost.append(cost)
             self.reset_house_availability()
@@ -112,9 +116,7 @@ class District():
         # plt.figure()
         # plt.plot(total_cost)
         # plt.show()
-        
-        # if show:
-        #     self.show_connections(title = 'greedy')
+    
     
     def swap(self):
         # get 2 distinct random batteries
@@ -167,5 +169,5 @@ class District():
                 self.costs += 9 * self.get_mhd(battery, house)
 
 if __name__ == "__main__":
-    district1 = District(1)
+    district1 = District(2)
     district1.greedy_allocation(show=True)
