@@ -36,7 +36,7 @@ class Battery():
 class District():
     def __init__(self, number):
         self.number = number
-        self.costs = 25000
+        self.reset_costs()
         self.path = f'data/district_{number}/district-{number}_'
         self.colors = ['#0fa2a9', '#ff1463', '#b479bb', '#15362f', '#68da23']
         self.batteries = []
@@ -60,12 +60,15 @@ class District():
 
     def random_allocation(self, show=True):
         j = 0
+        # shuffle de set van huizen totdat je wel een feasible oplossing hebt
         while not self.is_feasible():
             if j % 100 == 0:
+                # iteraties bijhouden
                 print(j)
 
             houses = copy.deepcopy(self.houses)
             random.shuffle(self.houses)
+            # pak voor elke batterij 30 huizen
             for i, battery in enumerate(self.connections.keys()):
                 self.connections[battery] = houses[i * 30: (i + 1) * 30]
             j += 1
@@ -75,48 +78,42 @@ class District():
             self.show_connections(title = 'random')
 
     def greedy_allocation(self, show=True):
+        # op hoeveel manieren kan je 5 batterijen sorteren?
+        # dit maakt een set van de batterijen op bepaalde volgordes waar je doorheen kan itereren
         orderings = list(itertools.permutations(self.batteries, 5))
-        total_cost = []
         for i, battery_ordering in enumerate(orderings):
-            cost = 25000 
+            # voor elke batterij in de order
             for battery in battery_ordering:
+                # dict met key huis object en value manhattan distance als het huis nog gekozen kan worden
                 distances = {house: mhd for house, mhd in self.all_distances[battery].items() if house.is_available}
+                # als de batterij nog niet vol is en distances nog niet leeg is
                 while not battery.is_full and distances:
+                    # zoek de minimale distance en pak het bijbehorende huis
                     house_to_add = min(distances, key=distances.get)
+                    # kijk of je dit huis kan toevoegen aan de batterij
                     if battery.is_feasible(house_to_add):
+                        # voeg huis toe aan de connections bij deze batterij
                         self.connections[battery].append(house_to_add)
+                        # verwijder dit huis vervolgens uit de dictionary van alle distances (want je wil dit huis niet meer kunnen kiezen)
                         mhd = distances.pop(house_to_add)
-                        cost += mhd * 9 
                         house_to_add.is_available = False
                     else:
+                        # als dit huis niet toegevoegd kan worden dan is de batterij dus vol
                         battery.is_full = True
-            
-            if sum([len(x) for x in self.connections.values()]) == 150:
-                print()
+
+            # dan is dus elk huis (alle 150) gealloceerd aan een batterij 
+            if sum([len(x) for x in self.connections.values()]) == 150: 
                 print("Feasible allocation found!")
-                print([len(x) for x in self.connections.values()])
-                print('___________________')
-                print(f'Costs: {cost}')
-                # if i == 119:
-                self.show_connections(title='greedy')
-            else:
-                print()
-                print("No feasible allocation found :(")
-                print([len(x) for x in self.connections.values()])
-                print('_____________________')
-
-            # if show:
-            #     self.show_connections(title = 'greedy')
-
-            total_cost.append(cost)
+                if show:
+                    # laat grafiek zien in mapje
+                    self.show_connections(title='greedy')
+            
+            # reset alle huizen, batterijen, connecties en kosten
+            # zodat je met de volgende iteratie met een schone lei begint
             self.reset_house_availability()
             self.reset_battery_capacity()
             self.reset_connections()
-            
-        # plt.figure()
-        # plt.plot(total_cost)
-        # plt.show()
-    
+            self.reset_costs()
     
     def swap(self):
         # get 2 distinct random batteries
@@ -157,16 +154,19 @@ class District():
                 ysteps = [battery.y, battery.y, house.y]
                 plt.plot(xsteps, ysteps, c=self.colors[battery.number - 1])
         self.calculate_costs()
+        print(self.costs)
         plt.grid(which='major', color='#57838D', linestyle='-')
         plt.minorticks_on()
         plt.grid(which='minor', color='#57838D', linestyle='-', alpha=0.2)
         plt.savefig(f'figures/{title}/{title.capitalize()} allocation: €{self.costs}')
 
     def calculate_costs(self):
-        total_distance = 0
         for battery, houses in self.connections.items():
             for house in houses:
                 self.costs += 9 * self.get_mhd(battery, house)
+    
+    def reset_costs(self):
+        self.costs = 25000
 
 if __name__ == "__main__":
     district1 = District(2)
