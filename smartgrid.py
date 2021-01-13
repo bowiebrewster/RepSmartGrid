@@ -44,7 +44,8 @@ class District():
         self.houses = []
         self.load_files()
         self.connections = {battery_obj: [] for battery_obj in self.batteries}
-        self.all_distances = {battery: {house: self.get_mhd(battery, house) for house in self.houses if} for battery in self.batteries}
+        self.battery_to_house = {battery: {house: self.get_mhd(battery, house) for house in self.houses if house.is_available} for battery in self.batteries}
+        self.house_to_battery = {house: {battery: self.get_mhd(battery, house) for battery in self.batteries} for house in self.houses if house.is_available}
 
     def load_files(self):
         files = [self.path + 'batteries.csv', self.path + 'houses.csv']
@@ -184,3 +185,4 @@ class District():
 if __name__ == "__main__":
     district1 = District(1)
     # district1.greedy_allocation(show=True)
+    print(district1.house_to_battery)

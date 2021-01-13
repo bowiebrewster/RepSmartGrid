@@ -54,7 +54,7 @@
         "House 10": 48,
         ...
     },
-    
+
     "Battery 5": {
         "House 1": 33,
         "House 2": 44,
