@@ -80,6 +80,37 @@ class District():
         if show:
             self.show_connections(title = 'random')
 
+    def ascending_greedy(self, show=True):
+        house_output = {house: house.output for house in self.houses if house.is_available}
+        while house_output:
+            house_to_add = max(house_output, key=house_output.get)
+            distances = {battery: mhd for battery, mhd in self.house_to_battery[house_to_add].items() if not battery.is_full if house_to_add.is_available}
+            if distances:
+                battery_to_connect = min(distances, key=distances.get)
+                if battery_to_connect.is_feasible(house_to_add):
+                    self.connections[battery_to_connect].append(house_to_add)
+                    del house_output[house_to_add]
+                    house_to_add.is_available = False
+                else:
+                    for battery in distances.keys():
+                        if battery.is_feasible(house_to_add):
+                            self.connections[battery].append(house_to_add)
+                            del house_output[house_to_add]
+                            house_to_add.is_available = False
+                            break        
+                    if house_to_add.is_available:
+                        battery_to_connect.is_full = True
+
+        if sum([len(x) for x in self.connections.values()]) == 150: 
+            print("Feasible allocation found!")
+            if show:
+                self.show_connections(title='greedy2')
+
+        self.reset_house_availability()
+        self.reset_battery_capacity()
+        self.reset_connections()
+        self.reset_costs()
+    
     def greedy_allocation(self, show=True):
         '''
         Per battery in a specific order, the closest houses are allocated 
@@ -89,7 +120,7 @@ class District():
         orderings = list(itertools.permutations(self.batteries, 5))
         for i, battery_ordering in enumerate(orderings):
             for battery in battery_ordering:
-                distances = {house: mhd for house, mhd in self.all_distances[battery].items() if house.is_available}
+                distances = {house: mhd for house, mhd in self.battery_to_house[battery].items() if house.is_available}
                 while not battery.is_full and distances:
                     house_to_add = min(distances, key=distances.get)
                     if battery.is_feasible(house_to_add):
@@ -165,11 +196,12 @@ class District():
                 ysteps = [battery.y, battery.y, house.y]
                 plt.plot(xsteps, ysteps, c=self.colors[battery.number - 1])
         self.calculate_costs()
-        print(self.costs)
         plt.grid(which='major', color='#57838D', linestyle='-')
         plt.minorticks_on()
         plt.grid(which='minor', color='#57838D', linestyle='-', alpha=0.2)
-        plt.savefig(f'figures/{title}/{title.capitalize()} allocation: €{self.costs}')
+        # plt.savefig(f'figures/{title}/{title.capitalize()} allocation: €{self.costs}')
+        plt.title(f"{title.capitalize()} allocation: €{self.costs}")
+        plt.show()
 
     def calculate_costs(self):
         '''
@@ -184,5 +216,4 @@ class District():
 
 if __name__ == "__main__":
     district1 = District(1)
-    # district1.greedy_allocation(show=True)
-    print(district1.house_to_battery)
+    district1.ascending_greedy(show=True)
