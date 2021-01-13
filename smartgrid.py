@@ -196,11 +196,12 @@ class District():
                 ysteps = [battery.y, battery.y, house.y]
                 plt.plot(xsteps, ysteps, c=self.colors[battery.number - 1])
         self.calculate_costs()
+        print(self.costs)
         plt.grid(which='major', color='#57838D', linestyle='-')
         plt.minorticks_on()
         plt.grid(which='minor', color='#57838D', linestyle='-', alpha=0.2)
         plt.title(f"{title.capitalize()} allocation: €{self.costs}")
-        plt.savefig(f'figures/{title}/{title.capitalize()} allocation: €{self.costs}')
+        plt.savefig(f'figures/{title}/District {self.number} {title.capitalize()} allocation: €{self.costs}')
 
     def calculate_costs(self):
         '''
@@ -214,6 +215,7 @@ class District():
         self.costs = 25000
 
 if __name__ == "__main__":
-    district1 = District(2)
-    # district1.ascending_greedy(show=True)
+    district1 = District(1)
     district1.random_allocation(show=True)
+    all_costs = []
+    all_costs.append(district1.costs)
