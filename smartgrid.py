@@ -12,8 +12,9 @@ class House():
         self.output = output
         self.is_available = True
 
-    def __str__(self):
-        return f'{self.number}'
+    #def __str__(self):
+        #return f'{self.number}'
+        #pass
 
 class Battery():
     def __init__(self, number, x, y, capacity):
@@ -31,8 +32,9 @@ class Battery():
         self.capacity -= house.output
         return True
 
-    def __str__(self):
-        return f'{self.number}'
+    #def __str__(self):
+        #return f'{self.number}'
+    #    pass
 
 class District():
     def __init__(self, number):
@@ -141,6 +143,41 @@ class District():
             self.reset_connections()
             self.reset_costs()
     
+    def nearest_iterative(self):
+
+
+
+        # battery capacity dictionary {battery: battery.capacity}
+        battery_cap = {battery: battery.capacity for battery in self.batteries if not battery.is_full}
+
+        for battery in self.batteries:
+            #distance dictionary word gemaakt {house: mhd}
+            distances = {house: mhd for house, mhd in self.battery_to_house[battery].items() if house.is_available}
+
+        battery_to_connect = max(battery_cap, key=battery_cap.get)
+        print("battery to connect:", battery_to_connect.number, "with a capacity of:", battery_to_connect.capacity)
+        printnumber = 100
+            
+        for house, mhd in self.battery_to_house[battery_to_connect].items():
+            house_to_add = min(distances, key=distances.get)
+            
+            if printnumber >0:
+                printnumber -= 1
+                print("House to add:",house_to_add.number, house_to_add.output)
+                print("house_to_add.is_available:",house_to_add.is_available)
+            if battery_to_connect.is_feasible(house_to_add) and house_to_add.is_available:
+                print("battery_to_connect.capacity",battery_to_connect.capacity)
+                print("ik ben de if statement in")
+                self.connections[battery_to_connect].append(house_to_add)
+                print("battery to connect en house to add:",battery_to_connect.number,house_to_add.number)
+                mhd = distances.pop(house_to_add)
+                house_to_add.is_available = False
+            else:
+                battery.is_full = True
+                if printnumber >0:
+                    printnumber -= 1
+                    print("ik ben de else statement in")
+
     def swap(self):
         # get 2 distinct random batteries
             # get random house from each 
@@ -214,6 +251,7 @@ class District():
         self.costs = 25000
 
 if __name__ == "__main__":
-    district1 = District(2)
-    # district1.ascending_greedy(show=True)
-    district1.random_allocation(show=True)
+    district1 = District(1)
+    #district1.ascending_greedy(show=True)
+    #district1.random_allocation(show=True)
+    district1.nearest_iterative()
