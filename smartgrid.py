@@ -44,6 +44,11 @@ class District():
         self.houses = []
         self.load_files()
         self.connections = {battery_obj: [] for battery_obj in self.batteries}
+        
+        # self.connections = {}
+        # for battery_obj in self.batteries:
+        #     self.connections[battery_obj] = []
+
         self.battery_to_house = {battery: {house: self.get_mhd(battery, house) for house in self.houses if house.is_available} for battery in self.batteries}
         self.house_to_battery = {house: {battery: self.get_mhd(battery, house) for battery in self.batteries} for house in self.houses if house.is_available}
 
@@ -65,6 +70,12 @@ class District():
         Randomly allocates 30 houses per battery
         Repeats this process until a feasible allocation is found
         '''
+
+        self.reset_house_availability()
+        self.reset_battery_capacity()
+        self.reset_connections()
+        self.reset_costs()
+
         j = 0
         while not self.is_feasible():
             if j % 100 == 0:
@@ -80,7 +91,15 @@ class District():
         if show:
             self.show_connections(title = 'random')
 
+        # print(self.connections.keys())
+
     def ascending_greedy(self, show=True):
+
+        self.reset_house_availability()
+        self.reset_battery_capacity()
+        self.reset_connections()
+        self.reset_costs()
+
         house_output = {house: house.output for house in self.houses if house.is_available}
         while house_output:
             house_to_add = max(house_output, key=house_output.get)
@@ -106,10 +125,7 @@ class District():
             if show:
                 self.show_connections(title='greedy2')
 
-        self.reset_house_availability()
-        self.reset_battery_capacity()
-        self.reset_connections()
-        self.reset_costs()
+
     
     def greedy_allocation(self, show=True):
         '''
@@ -117,10 +133,18 @@ class District():
         to that specific battery until the battery capacity is maxed out.
         Then the next battery in the order is chosen to fill up with houses.
         '''
+
+        self.reset_house_availability()
+        self.reset_battery_capacity()
+        self.reset_connections()
+        self.reset_costs()
+
         orderings = list(itertools.permutations(self.batteries, 5))
         for i, battery_ordering in enumerate(orderings):
             for battery in battery_ordering:
                 distances = {house: mhd for house, mhd in self.battery_to_house[battery].items() if house.is_available}
+
+
                 while not battery.is_full and distances:
                     house_to_add = min(distances, key=distances.get)
                     if battery.is_feasible(house_to_add):
@@ -136,15 +160,22 @@ class District():
                 if show:
                     self.show_connections(title='greedy')
             
-            self.reset_house_availability()
-            self.reset_battery_capacity()
-            self.reset_connections()
-            self.reset_costs()
+            print(self.connections.items())
+            
     
     def swap(self):
-        # get 2 distinct random batteries
-            # get random house from each 
-            # make swap
+        # count costs (old_cost)
+        # old_cost = self.calculate_costs()
+        # get two distinct random batteries
+            # get random house from the two batteries
+                # make feasible swap with these houses
+                # count costs again (new_cost)
+                # new_cost = self.calculate_costs()
+                # if new_costs < old_cost:
+                    # best_cost = new_cost
+                    # save this change
+                # else:
+                    # swap back
         pass
 
     def reset_house_availability(self):
@@ -200,7 +231,7 @@ class District():
         plt.minorticks_on()
         plt.grid(which='minor', color='#57838D', linestyle='-', alpha=0.2)
         plt.title(f"{title.capitalize()} allocation: €{self.costs}")
-        plt.savefig(f'figures/{title}/{title.capitalize()} allocation: €{self.costs}')
+        plt.savefig(f'figures/{title}/{title.capitalize()} allocation -- €{self.costs}')
 
     def calculate_costs(self):
         '''
@@ -214,6 +245,10 @@ class District():
         self.costs = 25000
 
 if __name__ == "__main__":
-    district1 = District(2)
-    # district1.ascending_greedy(show=True)
-    district1.random_allocation(show=True)
+    district1 = District(1)
+    district2 = District(2)
+    district3 = District(3)
+
+    # district2.ascending_greedy(show=True)
+    # district2.random_allocation(show=True)
+    district2.greedy_allocation(show=True)
