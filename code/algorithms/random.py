@@ -1,5 +1,7 @@
 import copy
 import random
+from code.visualisation.visualise import show_mst, show
+from code.shared_lines import prim
 
 class Random:
     '''
@@ -8,6 +10,7 @@ class Random:
     '''
     def __init__(self, district):
         self.name = 'Random'
+        self.districtnumber = district.number
         self.houses = copy.deepcopy(district.houses)
         self.batteries = district.batteries
         self.connections = {battery: [] for battery in self.batteries}
@@ -24,10 +27,13 @@ class Random:
                 self.connections[battery] = self.houses[i * 30: (i + 1) * 30]
             j += 1
 
-        print("Feasible allocation found!")
-        
         self.calculate_costs()
-        print(f"This allocation costs {self.costs}")
+        print("Feasible allocation found!")
+        self.feasible = True
+        self.mst, fc = prim.create_mst(self.connections)
+        self.costs = sum(fc)
+        print(f"This allocation costs €{self.costs}")
+        show_mst(self)
 
     def is_feasible(self):
         for battery, houses in self.connections.items():

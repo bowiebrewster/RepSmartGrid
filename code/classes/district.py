@@ -3,8 +3,9 @@ from .house import House
 
 class District():
 
-    def __init__(self, path):
-        self.path = path
+    def __init__(self, number):
+        self.number = number
+        self.path = f'data/district_{number}/district-{number}_'
         self.batteries = []
         self.houses = []
         self.load_files()
