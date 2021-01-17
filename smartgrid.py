@@ -178,6 +178,75 @@ class District():
                     printnumber -= 1
                     print("ik ben de else statement in")
 
+
+    def ez_way(self):
+        
+        # matrix of lenght number of batteries of height number of houses with entries tuple of distance and boolean 
+        DistanceMatrix = []
+        for house in self.houses:
+            DistancesPerBatterylist = []
+
+            for battery, mhd in self.house_to_battery[house].items():
+                DistancesPerBatterylist.append([mhd, False])
+
+            DistancesPerBatterylist.insert(0,[house.number,round(house.output,6),False])
+            DistanceMatrix.append(DistancesPerBatterylist)
+        
+        # 0th row with battery info to be inserted into matrix for clarity
+        Row0 = ["\t"+"\t"]
+        for battery in self.batteries:
+            Row0.append([int(battery.number),float(battery.capacity)])
+
+        DistanceMatrix.insert(0,Row0)
+
+        # note that [39,false] is now located at (1,1) in the array
+        return DistanceMatrix
+    
+
+    def nearest_iterative_ez(self):
+        DistanceMatrix = self.ez_way()
+
+        k = 1
+        # for each house 1 connection
+        while k < len(DistanceMatrix):
+            k += 1
+            
+            # take the battery with the highest capacity
+            Max_Cap = 0
+            FirstRow = DistanceMatrix[0][1:len(DistanceMatrix[0])]
+            for entry in FirstRow:
+                if entry[1]>Max_Cap:
+                    Max_Cap = entry[1]
+                    Bat_num = entry[0]
+            
+            # with that battery number find the nearest house
+            lowestdistance = DistanceMatrix[1][Bat_num][0]
+            House_num = 0
+            for j in range(1,len(DistanceMatrix)):
+                row = DistanceMatrix[j]
+                MatrixEntry = row[Bat_num]
+                distance = int(MatrixEntry[0])
+
+                if distance < lowestdistance and MatrixEntry[1] == False and row[0][2]== False:
+                    lowestdistance = distance
+                    House_num = row[0][0]
+                    
+            # with that house number establish the connection 
+            DistanceMatrix[House_num][Bat_num][1] = True
+            DistanceMatrix[House_num][0][2] = True
+
+            # and lower the capacity of the battery by the apropriate amount
+            House_Out = DistanceMatrix[House_num][0][1]
+            DistanceMatrix[0][Bat_num][1] = round(DistanceMatrix[0][Bat_num][1] - House_Out,6)
+
+
+        # printing for clairty
+        for a in DistanceMatrix:
+            for b in a:
+                print(b,end = "\t")
+            print()        
+
+
     def swap(self):
         # get 2 distinct random batteries
             # get random house from each 
@@ -254,4 +323,6 @@ if __name__ == "__main__":
     district1 = District(1)
     #district1.ascending_greedy(show=True)
     #district1.random_allocation(show=True)
-    district1.nearest_iterative()
+    #district1.nearest_iterative()
+    #district1.ez_way()
+    district1.nearest_iterative_ez()
