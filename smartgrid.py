@@ -163,19 +163,25 @@ class District():
             print(self.connections.items())
             
     
-    def swap(self):
-        # count costs (old_cost)
-        # old_cost = self.calculate_costs()
+    def simulated_annealing(self):
+        # count costs before swap # old_cost = self.calculate_costs()
+# for battery, houses in 
+# self.connections[battery]
         # get two distinct random batteries
             # get random house from the two batteries
                 # make feasible swap with these houses
-                # count costs again (new_cost)
-                # new_cost = self.calculate_costs()
+                # count costs after swap # new_cost = self.calculate_costs()
                 # if new_costs < old_cost:
-                    # best_cost = new_cost
-                    # save this change
+                    # save this change # best_cost = new_cost
                 # else:
-                    # swap back
+                    # swap the houses back
+        
+        # get a random item in dictionary
+        # a_dict = {'a': 1, 'b': 2, 'c': 3}
+        # entry_list = list(a_dict.items())
+        # random_entry = random.choice(entry_list)
+        # print(random_entry) -> output = ('b', 2)
+
         pass
 
     def reset_house_availability(self):
@@ -249,6 +255,6 @@ if __name__ == "__main__":
     district2 = District(2)
     district3 = District(3)
 
-    # district2.ascending_greedy(show=True)
+    district1.ascending_greedy(show=True)
     # district2.random_allocation(show=True)
-    district2.greedy_allocation(show=True)
+    # district2.greedy_allocation(show=True)
