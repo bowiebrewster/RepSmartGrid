@@ -59,6 +59,22 @@ import collections
 # del henk.product, henk.sum
 # print(piet)
 
-ledger = [('hoi', 'henk', 21), ('hi', 'anita', 15), ('ghello', 'bob', 35), ('hey', 'roens', 14)]
-smallest = min(ledger, key=lambda x: x[2])
-print(smallest)
+# ledger = [('hoi', 'henk', 21), ('hi', 'anita', 15), ('ghello', 'bob', 35), ('hey', 'roens', 14)]
+# smallest = min(ledger, key=lambda x: x[2])
+# print(smallest)
+
+# my_dict = {'henk': 1, 'anita': 2, 'bob': 3, 'herman': 4, 'ingrid': 5, 'sjonnie': 6}
+# batteries = {'b1': [1, 4, 6,7, 8,9], 'b2': [2, 3, 5, 10], 'b3': [11, 12, 13, 14, 15]}
+# print(batteries)
+# print("-------")
+# random_batteries = random.sample(list(batteries.items()), 2)
+# batt1, houses1 = random_batteries[0]
+# batt2, houses2 = random_batteries[1]
+# random_house1 = random.choice(houses1)
+# random_house2 = random.choice(houses2)
+# batteries[batt1].remove(random_house1)
+# print(batteries)
+
+r = random.random()
+print(r)
+# print(r)

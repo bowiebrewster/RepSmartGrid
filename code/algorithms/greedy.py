@@ -15,7 +15,7 @@ class Greedy:
         self.batteries = district.batteries
         self.houses = district.houses
         self.connections = {battery: [] for battery in self.batteries}
-        self.colors = ['#0fa2a9', '#ff1463', '#b479bb', '#15362f', '#68da23']
+        # self.colors = ['#0fa2a9', '#ff1463', '#b479bb', '#15362f', '#68da23']
         self.reset()
     
     def get_distances_battery_to_house(self, battery):

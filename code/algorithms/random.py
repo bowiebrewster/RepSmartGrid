@@ -29,11 +29,11 @@ class Random:
 
         self.calculate_costs()
         print("Feasible allocation found!")
-        self.feasible = True
-        self.mst, fc = prim.create_mst(self.connections)
-        self.costs = sum(fc)
-        print(f"This allocation costs €{self.costs}")
-        show_mst(self)
+        # self.feasible = True
+        # self.mst, fc = prim.create_mst(self.connections)
+        # self.costs = sum(fc)
+        # print(f"This allocation costs €{self.costs}")
+        # show_mst(self)
 
     def is_feasible(self):
         for battery, houses in self.connections.items():
