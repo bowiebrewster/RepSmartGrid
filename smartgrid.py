@@ -182,6 +182,16 @@ class District():
         # random_entry = random.choice(entry_list)
         # print(random_entry) -> output = ('b', 2)
 
+# SIMULATED ANNEALING PSEUDO CODE SLIDES:
+# Herhaal:
+#     Kies een random start state
+#     Kies start temperatuur
+#     Herhaal N iteraties:
+#         Doe een kleine random aanpassing
+#         Als random() > kans(oud, nieuw, temperatuur):
+#             Maak de aanpassing ongedaan
+#         Verlaag temperatuur
+
         pass
 
     def reset_house_availability(self):
