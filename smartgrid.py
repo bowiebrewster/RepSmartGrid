@@ -257,7 +257,7 @@ class District():
             print()       
 
         print(linesegments)
-        #self.reintegrate(DistanceMatrix)
+        self.reintegrate(DistanceMatrix)
 
     def reintegrate(self,DistanceMatrix):
         # over all houses and batteries
@@ -333,7 +333,7 @@ class District():
         plt.minorticks_on()
         plt.grid(which='minor', color='#57838D', linestyle='-', alpha=0.2)
         plt.title(f"{title.capitalize()} allocation: €{self.costs}")
-        plt.savefig(f'figures/{title}/{title.capitalize()} allocation: €{self.costs}')
+        plt.show()
 
     def calculate_costs(self):
         '''
@@ -353,4 +353,4 @@ if __name__ == "__main__":
     #district1.nearest_iterative()
     #district1.ez_way()
     district1.nearest_iterative_ez()
-    #district1.show_connections("title")
+    district1.show_connections("title")
