@@ -45,16 +45,16 @@ class Greedy:
                     else:
                         battery.is_full = True
 
-            if self.feasible_allocation() and i == 119:
+            if self.feasible_allocation() and i == 118:
                 print("Feasible allocation found!")
-
-                self.feasible = True
-                self.mst, fc = prim.create_mst(self.connections)
-                self.costs = sum(fc)
-                print(f"This allocation costs €{self.costs}")
-                show_mst(self)
-            else:
-                self.feasible = False
+                break
+                # self.feasible = True
+                # self.mst, fc = prim.create_mst(self.connections)
+                # self.costs = sum(fc)
+                # print(f"This allocation costs €{self.costs}")
+            #     # show_mst(self)
+            # else:
+            #     self.feasible = False
                 
             self.reset()
 

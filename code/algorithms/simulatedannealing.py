@@ -1,5 +1,6 @@
 import math
 import random
+import time
 
 class SimulatedAnnealing:
 
@@ -8,43 +9,42 @@ class SimulatedAnnealing:
         self.start_costs = start_state.costs
         self.start_temp = start_temp
         self.k_max = k_max
-        self.counts = []
+        self.districtnumber = start_state.districtnumber
+        self.name = 'Simulated Annealing'
 
     def run(self):
         self.current_temp = self.start_temp
         self.s_old = self.calculate_costs() # oude state, specifiek de kosten van die state
         i = 0
         print(f"The starting costs in the initial state are €{self.start_costs}")
+
+        start = time.time()
+        timeout = start + 60
         while self.current_temp > 0.01:
             self.current_temp = self.start_temp * (0.99)**i
-            # self.current_temp = self.start_temp * 1 / self.k_max
+
             for k in range(self.k_max):
                 # maak random swap
                 b1, b2, h1, h2 = self.get_random_batteries()
                 self.swap(b1, b2, h1, h2)
                 self.s_new = self.calculate_costs() # nieuwe state, aka de kosten van die state
-                
+
                 if not self.is_feasible():
-                    self.s_new += 500 * (self.k_max / (self.k_max + 50))
+                    self.s_new += 1000 * (self.k_max / (self.k_max + 50))
 
                 if self.acceptance_prob(self.s_old, self.s_new, self.current_temp) >= random.random():
+                    # print(self.acceptance_prob(self.s_old, self.s_new, self.current_temp))
                     self.s_old = self.s_new
                 else:
                     self.reverse_swap(b1, b2, h1, h2)
 
-                self.counts.append(self.s_old)
-
-            if not self.is_feasible():
-                print(f"The cost of this not feasible allocation is €{self.s_old}")
-            else:
-                print(f"This allocation is feasible and the costs are €{self.s_old}")
-
-            if self.counts.count(self.s_old) == 50:
+            if time.time() > timeout:
                 print('hoi')
                 break
 
             i += 1
 
+        self.costs = self.s_old
 
     def get_temp(self, k):
         return self.T0 / math.log(k)

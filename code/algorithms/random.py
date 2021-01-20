@@ -1,6 +1,6 @@
 import copy
 import random
-from code.visualisation.visualise import show_mst, show
+# from code.visualisation.visualise import show_mst, show
 from code.shared_lines import prim
 
 class Random:
