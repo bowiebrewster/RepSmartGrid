@@ -13,6 +13,6 @@ if __name__ == "__main__":
     r = random.Random(district)
     r.run()
     print("Starting Simulated Annealing")
-    sa = simulatedannealing.SimulatedAnnealing(r, 30, 200)
+    sa = simulatedannealing.SimulatedAnnealing(r, 30, 100)
     sa.run()
     # print(f"{time.time() - start}")

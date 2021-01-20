@@ -8,7 +8,7 @@ class SimulatedAnnealing:
         self.start_costs = start_state.costs
         self.start_temp = start_temp
         self.k_max = k_max
-        self.fine = 0
+        self.counts = []
 
     def run(self):
         self.current_temp = self.start_temp
@@ -23,20 +23,26 @@ class SimulatedAnnealing:
                 b1, b2, h1, h2 = self.get_random_batteries()
                 self.swap(b1, b2, h1, h2)
                 self.s_new = self.calculate_costs() # nieuwe state, aka de kosten van die state
-                # dan nog ff kijken of de nieuwe state feasible is
+                
                 if not self.is_feasible():
                     self.s_new += 500 * (self.k_max / (self.k_max + 50))
-                # of alleen feasible swaps laten zien?
 
                 if self.acceptance_prob(self.s_old, self.s_new, self.current_temp) >= random.random():
                     self.s_old = self.s_new
                 else:
                     self.reverse_swap(b1, b2, h1, h2)
 
+                self.counts.append(self.s_old)
+
             if not self.is_feasible():
-                print(f"The cost of this not feasible allocation is {self.s_old}")
+                print(f"The cost of this not feasible allocation is €{self.s_old}")
             else:
-                print(f"This allocation is feasible and the costs are {self.s_old}")
+                print(f"This allocation is feasible and the costs are €{self.s_old}")
+
+            if self.counts.count(self.s_old) == 50:
+                print('hoi')
+                break
+
             i += 1
 
 
