@@ -5,6 +5,7 @@ import numpy as np
 import operator
 import itertools
 import collections
+import math
 
 # path = f'data/district_1/district-1_'
 # files = [path + 'batteries.csv', path + 'houses.csv'] # de twee bestanden opslaan in lijst
@@ -75,6 +76,33 @@ import collections
 # batteries[batt1].remove(random_house1)
 # print(batteries)
 
-r = random.random()
-print(r)
+# r = random.random()
 # print(r)
+# print(r)
+
+def f(x):
+    return math.cos(x) + math.sin(x) + math.sin(10 * x)
+
+def acceptance_probability(s_old, s_new, temp):
+    if s_new < s_old:
+        return 1.0
+    else:
+        return math.exp((s_old - s_new) / temp)
+
+def main():
+    start_temp = 25
+    k_max = 1000
+    s_old = f(random.uniform(0,6))
+    current_temp = start_temp
+    i = 0
+    while current_temp > 0.0001:
+        current_temp = start_temp * (0.99)**i
+        for k in range(k_max):
+            s_new = f(random.uniform(0,6))
+            if acceptance_probability(s_old, s_new, current_temp) >= random.random():
+                s_old = s_new
+        i += 1
+        print(s_old)
+
+if __name__ == '__main__':
+    main()

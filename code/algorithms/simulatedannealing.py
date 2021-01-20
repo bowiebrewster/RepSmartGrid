@@ -3,59 +3,50 @@ import random
 
 class SimulatedAnnealing:
 
-    def __init__(self, start_state, start_temp, n):
+    def __init__(self, start_state, start_temp, k_max):
         self.connections = start_state.connections
         self.start_costs = start_state.costs
         self.start_temp = start_temp
-        self.final_temp = 0.1
-        self.n = n
+        self.k_max = k_max
         self.fine = 0
 
     def run(self):
-        print(f"The starting costs in the initial state are {self.start_costs}")
-        self.old_costs = self.start_costs
         self.current_temp = self.start_temp
-
-        j = 0
-        while self.current_temp > self.final_temp:
-            if j % 100 == 0:
-                print(j)
-            if j % 10 == 0:
-                print(f"The temperature is now {self.current_temp}")
-
-            # Herhaal n iteraties
-            for i in range(0, self.n):
-                # print(f"We zitten nu in iteratie {i} vd for loop")
-                # Doe een kleine random aanpassing
-                batt1, batt2, rh1, rh2 = self.get_random_batteries()
-
-                self.swap(batt1, batt2, rh1, rh2)
-                self.calculate_costs()
-
+        self.s_old = self.calculate_costs() # oude state, specifiek de kosten van die state
+        i = 0
+        print(f"The starting costs in the initial state are €{self.start_costs}")
+        while self.current_temp > 0.01:
+            self.current_temp = self.start_temp * (0.99)**i
+            # self.current_temp = self.start_temp * 1 / self.k_max
+            for k in range(self.k_max):
+                # maak random swap
+                b1, b2, h1, h2 = self.get_random_batteries()
+                self.swap(b1, b2, h1, h2)
+                self.s_new = self.calculate_costs() # nieuwe state, aka de kosten van die state
+                # dan nog ff kijken of de nieuwe state feasible is
                 if not self.is_feasible():
-                    self.fine += 10000
-                
-                # Als random() > kans(oud, nieuw, temperatuur):
-                if random.random() > self.acceptance_probability(self.old_costs, self.new_costs, self.current_temp):
-                    # Maak de aanpassing ongedaan
-                    self.reverse_swap(batt1, batt2, rh1, rh2)
+                    self.s_new += 500 * (self.k_max / (self.k_max + 50))
+                # of alleen feasible swaps laten zien?
+
+                if self.acceptance_prob(self.s_old, self.s_new, self.current_temp) >= random.random():
+                    self.s_old = self.s_new
                 else:
-                    # update oude en nieuwe kosten
-                    self.old_costs = self.new_costs
-            
-                # Verlaag temperatuur
-                self.current_temp = (self.current_temp)**i
+                    self.reverse_swap(b1, b2, h1, h2)
 
-                # print(self.current_temp)
-            j += 1
+            if not self.is_feasible():
+                print(f"The cost of this not feasible allocation is {self.s_old}")
+            else:
+                print(f"This allocation is feasible and the costs are {self.s_old}")
+            i += 1
 
-        print(f"The costs after SA are {self.new_costs}")
 
-    def acceptance_probability(self, old_cost, new_cost, temp):
-        if new_cost < old_cost:
+    def get_temp(self, k):
+        return self.T0 / math.log(k)
+    
+    def acceptance_prob(self, s_old, s_new, T):
+        if s_new < s_old:
             return 1.0
-        else:
-            return math.exp((old_cost - new_cost) / temp)
+        return math.exp((s_old - s_new) / T)
 
     def get_random_batteries(self):
         random_batteries = random.sample(list(self.connections.items()), 2)
@@ -93,9 +84,8 @@ class SimulatedAnnealing:
         return abs(battery.x - house.x) + abs(battery.y - house.y)
 
     def calculate_costs(self):
+        self.costs = 5000 * len(list(self.connections.keys()))
         for battery, houses in self.connections.items():
             for house in houses:
-                try:
-                    self.new_costs += 9 * self.get_mhd(battery, house)
-                except:
-                    self.new_costs = 9 * self.get_mhd(battery, house)
+                self.costs += 9 * self.get_mhd(battery, house)
+        return self.costs
