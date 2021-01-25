@@ -144,7 +144,6 @@ class District():
             for battery in battery_ordering:
                 distances = {house: mhd for house, mhd in self.battery_to_house[battery].items() if house.is_available}
 
-
                 while not battery.is_full and distances:
                     house_to_add = min(distances, key=distances.get)
                     if battery.is_feasible(house_to_add):
