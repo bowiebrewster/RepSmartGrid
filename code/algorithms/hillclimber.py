@@ -1,64 +1,55 @@
-from .random import Random
-
+import math
 import random
-import copy
+
 
 class HillClimber:
-    '''
-    The hill climber algorithm starts with a random feasible solution. It then makes random swaps between houses and batteries,
-    if the swap gives a more optimal solution. If no swaps are possible anymore, the algorithm comes to a stop.
-    '''
-    def __init__(self, algo):
+    """
+    HILL CLIMBER PSEUDO SLIDES:
+    Kies een random start state
+    Herhaal n keer: OF Herhaal tot na n keer niet meer verbeterd:
+        Doe een kleine random aanpassing
+        Als de state verslechterd: 
+            Maak de aanpassing ongedaan
+    """
+
+    def __init__(self, start_state, n):
+        self.connections = start_state.connections
+        self.start_costs = start_state.costs
+        self.n = n
+        self.districtnumber = start_state.districtnumber
         self.name = 'Hill Climber'
-        self.districtnumber = algo.districtnumber
-        self.connections = algo.connections
 
-    def run_unique(self, k_max=100):
-        current_E = self.calculate_costs()
+    def run(self):
+        # de kosten van de oude state zijn op dit moment ook de beste kosten, er valt nog niks te vergelijken
+        self.best_costs = self.calculate_costs() 
 
-        for k in range(k_max):
-            # make random swap
-            b1, b2, h1, h2 = self.get_random_batteries()
-            self.swap(b1, b2, h1, h2)
-            new_E = self.calculate_costs()
+        print(f"The starting costs in the initial state are €{self.start_costs}")
 
-            if not self.is_feasible():
-                new_E += 500
+        count_verslechtering = 0
+        # als er 50 (kan nog aangepast worden) keer een verslechtering is, dan stopt het algoritme met runnen
+        while count_verslechtering != 50:
 
-            if new_E < current_E:
-                current_E = new_E
-            else:
-                self.reverse_swap(b1, b2, h1, h2)
-
-        # final (global) minimum without mst
-        print(f"The cost of the allocation after hill climber is €{current_E}.")
-    
-    def run_shared(self, k_max=10):
-
-        _, current_Es = prim.create_mst(self.connections)
-        current_E = sum(current_Es) 
-
-        for k in range(k_max):
-            # make random swap
-            b1, b2, h1, h2 = self.get_random_batteries()
+            # maak random swap
+            b1, b2, h1, h2 = self.get_random_houses()
             self.swap(b1, b2, h1, h2)
 
-            _, new_Es = prim.create_mst(self.connections)
-            new_E = sum(new_Es)
-            
-            if not self.is_feasible():
-                new_E += 500 
+            # bereken de kosten van de nieuwe state
+            self.new_costs = self.calculate_costs() 
 
-            if new_E < current_E:
-                current_E = new_E
-    
+            # bewaar de nieuwe kosten als beste kosten als de state verbeterd
+            if self.new_costs < self.best_costs:
+                self.best_costs = self.new_costs
+                # aantal aansluitende verslechteringen wordt gereset
+                count_verslechtering = 0
+            # maak swap ongedaan als de state verslechterd
             else:
                 self.reverse_swap(b1, b2, h1, h2)
+                # aantal aansluitende verslechteringen gaat met 1 omhoog
+                count_verslechtering += 1
 
-        # final (global) minimum with mst
-        print(f"The cost of the allocation after hill climber is €{current_E}.")
+        self.costs = self.best_costs
 
-    def get_random_batteries(self):
+    def get_random_houses(self):
         random_batteries = random.sample(list(self.connections.items()), 2)
             
         batt1, houses1 = random_batteries[0]
