@@ -35,7 +35,7 @@ class Grid:
         plt.title(f"District {self.number} allocation €{self.costs}")
 
         if self.version != None:
-            plt.savefig(f'figures/{selfname.lower()}/version_{self.version}/unique/District {self.number} allocation €{self.costs}')
+            plt.savefig(f'figures/{self.name.lower()}/version_{self.version}/unique/District {self.number} allocation €{self.costs}')
         else:
             plt.savefig(f'figures/{self.name.lower()}/unique/District {self.number} allocation €{self.costs}')
 

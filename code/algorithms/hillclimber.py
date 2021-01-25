@@ -12,14 +12,13 @@ class HillClimber:
             Maak de aanpassing ongedaan
     """
 
-    def __init__(self, start_state, n):
+    def __init__(self, start_state):
         self.connections = start_state.connections
         self.start_costs = start_state.costs
-        self.n = n
         self.districtnumber = start_state.districtnumber
         self.name = 'Hill Climber'
 
-    def run(self):
+    def run_unique(self):
         # de kosten van de oude state zijn op dit moment ook de beste kosten, er valt nog niks te vergelijken
         self.best_costs = self.calculate_costs() 
 

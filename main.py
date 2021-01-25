@@ -1,13 +1,11 @@
-import time
-import numpy as np 
+from datetime import datetime
+import numpy as np
 import matplotlib.pyplot as plt 
-from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm 
+from mpl_toolkits.mplot3d import Axes3D
 
 from code.classes.district import District
-
 from code.algorithms import greedy, random, simulatedannealing, hillclimber
-
 from code.visualisation import visualise
 
 if __name__ == "__main__":
@@ -34,7 +32,7 @@ if __name__ == "__main__":
     while 'y' not in save.lower() and 'n' not in save.lower():
         save = input("Do you want to save the figure? Type y(es) or n(o). ")
 
-    start = time.time()
+    # begin_runtime = datetime.now()
     district = District(number)
     if 'r' in algo1:
         algo = random.Random(district)
