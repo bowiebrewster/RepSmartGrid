@@ -1,7 +1,5 @@
-#prim heeft de node nodig
 from code.classes.node import Node
 import copy
-
 
 def create_mst(connections):
     forest_costs = []

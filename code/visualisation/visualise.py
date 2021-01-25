@@ -1,60 +1,54 @@
 import matplotlib.pyplot as plt
 
-def show_sa(algorithm):
-    '''
-    Shows how the houses are connected to the batteries in a grid by a certain algorithm
-    '''
+class Grid:
 
-    colors = ['#0fa2a9', '#ff1463', '#b479bb', '#15362f', '#68da23']
+    def __init__(self, connections, mst, name, number, costs, version=None):
+        self.connections = connections
+        self.mst = mst
+        self.name = name
+        self.version = version
+        self.number = number
+        self.costs = costs
+        self.load_grid()
+        if self.mst:
+            self.show_shared()
+        else:
+            self.show_unique()
 
-    for battery, houses in algorithm.connections.items():
-        plt.scatter(battery.x, battery.y, c=colors[battery.number - 1], marker='s')
-        for house in houses:
-            plt.scatter(house.x, house.y, c=colors[battery.number - 1], marker='*')
+    def load_grid(self):
+        for battery, houses in self.connections.items():
+            plt.scatter(battery.x, battery.y, c=battery.color, marker='s')
+            for house in houses:
+                plt.scatter(house.x, house.y, c=battery.color, marker='*')
 
-            xsteps = [battery.x, house.x, house.x]
-            ysteps = [battery.y, battery.y, house.y]
-            plt.plot(xsteps, ysteps, c=colors[battery.number - 1])
+        plt.grid(which='major', color='#57838D', linestyle='-')
+        plt.minorticks_on()
+        plt.grid(which='minor', color='#57838D', linestyle='-', alpha=0.2)
 
-    plt.grid(which='major', color='#57838D', linestyle='-')
-    plt.minorticks_on()
-    plt.grid(which='minor', color='#57838D', linestyle='-', alpha=0.2)
-    plt.title(f"District {algorithm.districtnumber} {algorithm.name} allocation after SA: €{algorithm.costs}")
-    plt.savefig(f'figures/sa/district_{algorithm.districtnumber}/{algorithm.name} allocation after SA €{algorithm.costs}')
+    def show_unique(self):
+        for battery, houses in self.connections.items():
+            for house in houses:
+                xsteps = [battery.x, house.x, house.x]
+                ysteps = [battery.y, battery.y, house.y]
+                plt.plot(xsteps, ysteps, c=battery.color)
 
-def show_r(algorithm):
-    '''
-    Shows how the houses are connected to the batteries in a grid by a certain algorithm
-    '''
+        plt.title(f"District {self.number} allocation €{self.costs}")
 
-    colors = ['#0fa2a9', '#ff1463', '#b479bb', '#15362f', '#68da23']
+        if self.version != None:
+            plt.savefig(f'figures/{selfname.lower()}/version_{self.version}/unique/District {self.number} allocation €{self.costs}')
+        else:
+            plt.savefig(f'figures/{self.name.lower()}/unique/District {self.number} allocation €{self.costs}')
 
-    for battery, houses in algorithm.connections.items():
-        plt.scatter(battery.x, battery.y, c=colors[battery.number - 1], marker='s')
-        for house in houses:
-            plt.scatter(house.x, house.y, c=colors[battery.number - 1], marker='*')
+    def show_shared(self):
+        for battery, houses in self.connections.items():
+            for house in houses:
+                paths = algorithm.mst[battery]
+                for x, y in paths:
+                    plt.plot(x, y, c=battery.color)
+        
+        plt.title(f"District {self.number} allocation €{self.costs}")
 
-            xsteps = [battery.x, house.x, house.x]
-            ysteps = [battery.y, battery.y, house.y]
-            plt.plot(xsteps, ysteps, c=colors[battery.number - 1])
-
-    plt.grid(which='major', color='#57838D', linestyle='-')
-    plt.minorticks_on()
-    plt.grid(which='minor', color='#57838D', linestyle='-', alpha=0.2)
-    plt.title(f"District {algorithm.districtnumber} {algorithm.name} allocation before SA: €{algorithm.costs}")
-    plt.savefig(f'figures/sa/district_{algorithm.districtnumber}/{algorithm.name} allocation before SA €{algorithm.costs}')
-
-def show_mst(algorithm):
-    for battery, houses in algorithm.connections.items():
-        plt.scatter(battery.x, battery.y, c=battery.color, marker='H')
-        for house in houses:
-            plt.scatter(house.x, house.y, c=battery.color, marker='*')
-        paths = algorithm.mst[battery]
-        for x, y in paths:
-            plt.plot(x, y, c=battery.color)
-    
-    plt.grid(which='major', color='#57838D', linestyle='-')
-    plt.minorticks_on()
-    plt.grid(which='minor', color='#57838D', linestyle='-', alpha=0.2)
-    plt.title(f"Minimum spanning tree - Random allocation: €{algorithm.costs}")
-    plt.savefig(f'figures/mst/district_{algorithm.districtnumber}/{algorithm.name} allocation €{algorithm.costs}')
+        if self.version != None:
+            plt.savefig(f'figures/{self.name.lower()}/version_{self.version}/shared/District {self.number} allocation €{self.costs}')
+        else:
+            plt.savefig(f'figures/{self.name.lower()}/shared/District {self.number} allocation €{selflgo.costs}')

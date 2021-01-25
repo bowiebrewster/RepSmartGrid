@@ -1,58 +1,96 @@
 import math
 import random
 import time
+# from code.visualisation.visualise import show_sa
+from code.shared_lines import prim
 
 class SimulatedAnnealing:
 
-    def __init__(self, start_state, start_temp, k_max):
-        self.connections = start_state.connections
-        self.start_costs = start_state.costs
-        self.start_temp = start_temp
-        self.k_max = k_max
-        self.districtnumber = start_state.districtnumber
-        self.name = 'Simulated Annealing'
+    def __init__(self, algo, start_temp=None, k_max=None):
+        self.connections = algo.connections
+        self.districtnumber = algo.districtnumber
+        self.name = algo.name
 
-    def run(self):
-        self.current_temp = self.start_temp
-        self.s_old = self.calculate_costs() # oude state, specifiek de kosten van die state
+    def run_unique(self, cr, start_temp, save, k_max=50):
+        current_temp = start_temp
+        current_E = self.calculate_costs()
+
         i = 0
-        print(f"The starting costs in the initial state are €{self.start_costs}")
+        while current_temp > 0.001:
 
-        start = time.time()
-        timeout = start + 60
-        while self.current_temp > 0.01:
-            self.current_temp = self.start_temp * (0.99)**i
+            if current_temp < 0:
+                break
 
-            for k in range(self.k_max):
-                # maak random swap
+            current_temp = start_temp * (1 - cr)**i # exponential
+
+            for k in range(k_max):
+                # make random swap
                 b1, b2, h1, h2 = self.get_random_batteries()
                 self.swap(b1, b2, h1, h2)
-                self.s_new = self.calculate_costs() # nieuwe state, aka de kosten van die state
+                new_E = self.calculate_costs()
 
                 if not self.is_feasible():
-                    self.s_new += 1000 * (self.k_max / (self.k_max + 50))
+                    new_E += 500
 
-                if self.acceptance_prob(self.s_old, self.s_new, self.current_temp) >= random.random():
-                    # print(self.acceptance_prob(self.s_old, self.s_new, self.current_temp))
-                    self.s_old = self.s_new
+                if self.acceptance_prob(current_E, new_E, current_temp) >= random.random():
+                    current_E = new_E
+                else:
+                    self.reverse_swap(b1, b2, h1, h2)
+            i += 1
+            print(f"The cost is now €{current_E}")
+
+        # final (global) minimum without mst
+        print(f"The allocation after simulated annealing costs €{current_E}")
+        self.costs = current_E
+
+        # if save:
+        #     show_sa(self, shared=False)
+    
+    def run_shared(self, cr, start_temp, save, k_max=10):
+        current_temp = start_temp
+
+        _, current_Es = prim.create_mst(self.connections)
+        current_E = sum(current_Es) 
+
+        while current_temp > 0.1:
+            current_temp -= cr # linear
+
+            if current_temp < 0:
+                break
+
+            for k in range(k_max):
+                # make random swap
+                b1, b2, h1, h2 = self.get_random_batteries()
+                self.swap(b1, b2, h1, h2)
+
+                _, new_Es = prim.create_mst(self.connections)
+                new_E = sum(new_Es)
+                
+                if not self.is_feasible():
+                    new_E += 500 
+
+                if self.acceptance_prob(current_E, new_E, current_temp) >= random.random():
+                    current_E = new_E
+        
                 else:
                     self.reverse_swap(b1, b2, h1, h2)
 
-            if time.time() > timeout:
-                print('hoi')
-                break
+            print(f"The cost is now €{current_E}")
 
-            i += 1
+        # final (global) minimum with mst
+        print(f"The allocation after simulated annealing costs €{current_E}")
+        self.costs = current_E
 
-        self.costs = self.s_old
+        # if save:
+        #     show_sa(self, shared=True)
 
     def get_temp(self, k):
         return self.T0 / math.log(k)
     
-    def acceptance_prob(self, s_old, s_new, T):
-        if s_new < s_old:
+    def acceptance_prob(self, current_E, new_E, T):
+        if new_E < current_E:
             return 1.0
-        return math.exp((s_old - s_new) / T)
+        return math.exp((current_E - new_E) / T)
 
     def get_random_batteries(self):
         random_batteries = random.sample(list(self.connections.items()), 2)

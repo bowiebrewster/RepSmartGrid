@@ -1,6 +1,6 @@
 import copy
 import random
-# from code.visualisation.visualise import show_mst, show
+from code.visualisation import visualise
 from code.shared_lines import prim
 
 class Random:
@@ -16,7 +16,7 @@ class Random:
         self.connections = {battery: [] for battery in self.batteries}
         self.costs = 5000 * len(self.batteries)
 
-    def run(self):
+    def run(self, mst, save):
         j = 0
         while not self.is_feasible():
             if j % 100 == 0:
@@ -27,13 +27,16 @@ class Random:
                 self.connections[battery] = self.houses[i * 30: (i + 1) * 30]
             j += 1
 
-        self.calculate_costs()
         print("Feasible allocation found!")
-        # self.feasible = True
-        # self.mst, fc = prim.create_mst(self.connections)
-        # self.costs = sum(fc)
-        # print(f"This allocation costs €{self.costs}")
-        # show_mst(self)
+        if save:
+            if mst:
+                self.mst, fc = prim.create_mst(self.connections)
+                self.costs = sum(fc)
+            else: 
+                self.calculate_costs()
+
+            print(f"This allocation costs €{self.costs}")
+            grid = visualise.Grid(self.connections, mst, self.name, self.districtnumber, self.costs, version=None)
 
     def is_feasible(self):
         for battery, houses in self.connections.items():

@@ -2,7 +2,7 @@ import itertools
 import random
 import copy
 import matplotlib.pyplot as plt
-from code.visualisation.visualise import show_mst
+from code.visualisation import visualise
 from code.shared_lines import prim
 
 class Greedy:
@@ -15,25 +15,28 @@ class Greedy:
         self.batteries = district.batteries
         self.houses = district.houses
         self.connections = {battery: [] for battery in self.batteries}
-        # self.colors = ['#0fa2a9', '#ff1463', '#b479bb', '#15362f', '#68da23']
         self.reset()
     
-    def get_distances_battery_to_house(self, battery):
+    def houses_distances(self, battery):
         return {house: self.get_mhd(battery, house) for house in self.houses if house.is_available}
 
-    def get_distances_house_to_battery(self, house):
+    def batteries_distances(self, house):
         return {battery: self.get_mhd(battery, house) for battery in self.batteries if not battery.is_full}
     
-    def run_v1(self):
+    def run_v1(self, mst, save):
         '''
         Per battery in a specific order, the closest houses are allocated 
         to that specific battery until the battery capacity is maxed out.
         Then the next battery in the order is chosen to fill up with houses.
         '''
+
+        self.version = 1
+        print("Let's get version 1 running!")
+
         orderings = list(itertools.permutations(self.batteries, 5))
         for i, battery_ordering in enumerate(orderings):
             for battery in battery_ordering:
-                distances = self.get_distances_battery_to_house(battery)
+                distances = self.houses_distances(battery)
 
                 while not battery.is_full and distances:
                     house_to_add = min(distances, key=distances.get)
@@ -47,24 +50,30 @@ class Greedy:
 
             if self.feasible_allocation() and i == 118:
                 print("Feasible allocation found!")
-                break
-                # self.feasible = True
-                # self.mst, fc = prim.create_mst(self.connections)
-                # self.costs = sum(fc)
-                # print(f"This allocation costs €{self.costs}")
-            #     # show_mst(self)
-            # else:
-            #     self.feasible = False
+                if save:
+                    if mst:
+                        self.mst, fc = prim.create_mst(self.connections)
+                        self.costs = sum(fc)
+                    else: 
+                        self.calculate_costs()
+
+                    print(f"This allocation costs €{self.costs}")
+                    grid = visualise.Grid(self.connections, mst, self.name, self.districtnumber, self.costs, self.version)
                 
             self.reset()
 
-    def run_v2(self):
+    def run_v2(self, mst, save):
+        self.version = 2
+        print("Let's get version 2 running!")
         house_output = {house: house.output for house in self.houses if house.is_available}
+
         i = 0
-        while house_output:
+        while house_output and i <= 150:
+            if i % 10 ==0:
+                print(i)
 
             house_to_add = max(house_output, key=house_output.get)
-            distances = self.get_distances_house_to_battery(house_to_add)
+            distances = self.batteries_distances(house_to_add)
 
             if distances:
                 battery_to_connect = min(distances, key=distances.get)
@@ -84,34 +93,20 @@ class Greedy:
                         else:
                             battery_to_connect.is_full = True
             i += 1
-            if i == 150:
-                if self.feasible_allocation():
-                    print("Feasible allocation found!")
+
+        if self.feasible_allocation():
+            print("Feasible allocation found!")
+            if save:
+                if mst:
                     self.mst, fc = prim.create_mst(self.connections)
                     self.costs = sum(fc)
-                    print(f"This allocation costs €{self.costs}")
-                    show_mst(self)
-                    self.feasible = True
-                else:
-                    print("No feasible allocation found :(")
-                    self.feasible = False
-                break
+                else: 
+                    self.calculate_costs()
 
-    def show(self):
-        for battery, houses in self.connections.items():
-            plt.scatter(battery.x, battery.y, c=self.colors[battery.number - 1], marker='s')
-            for house in houses:
-                plt.scatter(house.x, house.y, c=self.colors[battery.number - 1], marker='*')
-
-                xsteps = [battery.x, house.x, house.x]
-                ysteps = [battery.y, battery.y, house.y]
-                plt.plot(xsteps, ysteps, c=self.colors[battery.number - 1])
-
-        plt.grid(which='major', color='#57838D', linestyle='-')
-        plt.minorticks_on()
-        plt.grid(which='minor', color='#57838D', linestyle='-', alpha=0.2)
-        plt.title(f"{self.name} allocation: €{self.costs}")
-        plt.savefig(f'figures/{self.name.lower()}/District {self.districtnumber}: {self.name} allocation €{self.costs}')
+                print(f"This allocation costs €{self.costs}")
+                grid = visualise.Grid(self.connections, mst, self.name, self.districtnumber, self.costs, self.version)
+        else:
+            print("No feasible allocation found :(")
 
     def feasible_allocation(self):
         if sum([len(x) for x in self.connections.values()]) == 150: 
