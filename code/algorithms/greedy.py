@@ -113,12 +113,6 @@ class Greedy:
             return True
         return False
 
-    def swap(self):
-        # get 2 distinct random batteries
-        # get random house from each 
-        # make swap
-        pass
-
     def reset(self):
         self.costs = 5000 * len(self.batteries)
 
@@ -133,3 +127,10 @@ class Greedy:
 
     def get_mhd(self, battery, house):
         return abs(battery.x - house.x) + abs(battery.y - house.y)
+
+    def calculate_costs(self):
+        self.costs = 5000 * len(list(self.connections.keys()))
+        for battery, houses in self.connections.items():
+            for house in houses:
+                self.costs += 9 * self.get_mhd(battery, house)
+        return self.costs

@@ -10,6 +10,7 @@ class SimulatedAnnealing:
         self.connections = algo.connections
         self.districtnumber = algo.districtnumber
         self.name = algo.name
+        self.start_temp = start_temp
 
     def run_unique(self, cr, start_temp, save, k_max=50):
         current_temp = start_temp
@@ -85,7 +86,7 @@ class SimulatedAnnealing:
         #     show_sa(self, shared=True)
 
     def get_temp(self, k):
-        return self.T0 / math.log(k)
+        return self.start_temp / math.log(k)
     
     def acceptance_prob(self, current_E, new_E, T):
         if new_E < current_E:
