@@ -20,7 +20,14 @@ Wij hebben twee verschillende greedy algoritmen toegepast:
 Het Simulated Annealing en Hill Climber algoritme zijn optimalisatie algoritmen. Dit betekent dat er al een feasible start-oplossing bestaat en dat deze oplossing door middel van de optimalisatie algoritmen wordt verbeterd.
 
 ### Simulated Annealing
-
+(pseudocode):
+- Kies een random start state
+- Kies start temperatuur
+- Herhaal N iteraties:
+  - Doe een kleine random aanpassing
+  - Als random() > kans(oud, nieuw, temperatuur):
+    - Maak de aanpassing ongedaan
+  - Verlaag temperatuur
 
 ### Hill Climber
 Bij het Hill Climber algoritme worden er telkens twee random huizen gekozen die aan verschillende batterijen zijn gekoppeld en deze worden omgewisseld. Vervolgens vergelijken we de totale kosten voor de wissel en na de wissel. Als de kosten na de wissel lager zijn dan voor de wissel (verbetering), dan behouden we de wissel. Zo niet (verslechtering), dan wordt de wissel ongedaan gemaakt. Dit proces wordt N iteraties herhaald.
