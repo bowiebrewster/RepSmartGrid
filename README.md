@@ -9,7 +9,7 @@ De opdracht is om alle huizen aan de batterijen te koppelen zodat de kosten van 
 Het random en greedy algoritme zijn baseline algoritmen. Dit betekent dat er nog geen oplossing is, alleen huizen en batterijen die op een goede manier aan elkaar gekoppeld moeten worden door middel van kabels. Er zijn drie woonwijken (districts), met 150 huizen en 5 batterijen per wijk.
 
 ### Random
-Bij dit random algoritme hebben wij de aanname gedaan dat er dus aan elke batterij (150/5=) 30 huizen gekoppeld moeten worden. In dit algoritme worden er dus 30 random huizen aan elke batterij gekoppeld, totdat er een feasible solution uit komt.
+Bij dit random algoritme hebben wij de aanname gedaan dat er dus aan elke batterij (150 / 5 =) 30 huizen gekoppeld moeten worden. In dit algoritme worden er dus 30 random huizen aan elke batterij gekoppeld, totdat er een feasible solution uit komt.
 
 ### Greedy
 Wij hebben twee verschillende greedy algoritmen toegepast:
