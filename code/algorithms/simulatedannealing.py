@@ -163,3 +163,30 @@ class SimulatedAnnealing:
         self.costs += 9 * self.get_mhd(batt2, house1)
 
         return self.costs
+
+    def calibrate(self, cr, start_temp, k_max=150):
+        current_temp = start_temp
+        current_E = self.calculate_costs()
+
+        i = 0
+        while current_temp > 0.001:
+
+            current_temp = start_temp * (1 - cr)**i # exponential
+
+            for k in range(k_max):
+                # make random swap
+                b1, b2, h1, h2 = self.get_random_batteries()
+                self.swap(b1, b2, h1, h2)
+                new_E = self.update_costs(b1, b2, h1, h2)
+
+                if not self.is_feasible():
+                    new_E += 500
+
+                if self.acceptance_prob(current_E, new_E, current_temp) >= random.random():
+                    current_E = new_E
+                else:
+                    self.reverse_swap(b1, b2, h1, h2)
+                    current_E = self.update_costs(b1, b2, h2, h1)
+            i += 1
+            
+        print(f"The cost is now €{current_E}.")
