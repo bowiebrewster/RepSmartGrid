@@ -29,5 +29,7 @@ Het Simulated Annealing en Hill Climber algoritme zijn optimalisatie algoritmen.
     - Maak de aanpassing ongedaan
   - Verlaag temperatuur
 
+Bij het Simulated Annealing algoritme wordt er ten eerste een start-oplossing en start temperatuur gekozen. 
+
 ### Hill Climber
 Bij het Hill Climber algoritme worden er telkens twee random huizen gekozen die aan verschillende batterijen zijn gekoppeld en deze worden omgewisseld. Vervolgens vergelijken we de totale kosten voor de wissel en na de wissel. Als de kosten na de wissel lager zijn dan voor de wissel (verbetering), dan behouden we de wissel. Zo niet (verslechtering), dan wordt de wissel ongedaan gemaakt. Dit proces wordt N iteraties herhaald.
