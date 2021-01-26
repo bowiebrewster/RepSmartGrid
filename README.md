@@ -5,10 +5,10 @@ De opdracht is om alle huizen aan de batterijen te koppelen zodat de kosten van 
 
 # Algoritmen
 
-## Random
+### Random
 
-## Greedy
+### Greedy
 
-## Simulated Annealing
+### Simulated Annealing
 
-## Hill Climber
+### Hill Climber
