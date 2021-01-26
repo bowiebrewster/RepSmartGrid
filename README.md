@@ -6,9 +6,15 @@ De opdracht is om alle huizen aan de batterijen te koppelen zodat de kosten van 
 # Algoritmen
 
 ### Random
+Bij het random algortime is er nog geen oplossing, alleen huizen en batterijen die op een goede manier aan elkaar gekoppeld moeten worden door middel van kabels. Er zijn drie woonwijken, met 150 huizen en 5 batterijen per wijk. Bij dit random algoritme hebben wij de aanname gedaan dat er dus aan elke batterij (150/5=) 30 huizen gekoppeld moeten worden. In dit algoritme worden er dus 30 random huizen aan elke batterij gekoppeld, totdat er een feasible solution uit komt.
 
 ### Greedy
+Bij het greedy algortime is er nog geen oplossing, alleen huizen en batterijen die op een goede manier aan elkaar gekoppeld moeten worden door middel van kabels. Wij hebben twee verschillende greedy algoritmen toegepast:
+- Eén waarbij we vanuit elke batterij kijken naar de dichtstbijzijnde huizen, dus we gaan elke batterij langs en koppelen alle dichtstbijzijnde huizen aan die batterij, totdat de batterij geen capaciteit meer heeft. En zo gaan we alle batterijen langs totdat de batterijen vol zitten. Echter geeft deze manier niet altijd een feasible solution. Dit specifieke greedy algoritme geeft alleen een feasible solution voor district 2 en niet voor district 1 en 2.
+- Eén waarbij we vanuit elk huis kijken naar de dichtstbijzijnde batterij, waarbij de huizen op output van hoog naar laag zijn gesorteerd. Dus kijkend naar de huizen, beginnend met het huis met de hoogste output en deze koppelen aan de dichtstbijzijnde batterij (die nog genoeg capaciteit over heeft) en zo door totdat (alle) huizen gekoppeld zijn. Echter geeft dit greedy algoritme ook niet altijd een feasible solution. Dit specifieke greedy algoritme geeft alleen een feasible solution voor district 1 en 3 en niet voor district 2.
 
 ### Simulated Annealing
 
+
 ### Hill Climber
+
