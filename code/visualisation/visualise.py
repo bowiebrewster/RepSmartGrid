@@ -2,15 +2,18 @@ import matplotlib.pyplot as plt
 
 class Grid:
 
-    def __init__(self, connections, mst, name, number, costs, version=None):
+    def __init__(self, connections, shared, name, number, costs, mst=None, version=None, second=None):
         self.connections = connections
-        self.mst = mst
+        self.shared = shared
         self.name = name
         self.version = version
         self.number = number
         self.costs = costs
         self.load_grid()
-        if self.mst:
+        self.second = second
+      
+        if self.shared:
+            self.mst = mst
             self.show_shared()
         else:
             self.show_unique()
@@ -34,21 +37,32 @@ class Grid:
 
         plt.title(f"District {self.number} allocation €{self.costs}")
 
-        if self.version != None:
-            plt.savefig(f'figures/{selfname.lower()}/version_{self.version}/unique/District {self.number} allocation €{self.costs}')
+        if self.second != None:
+            if self.version != None:
+                plt.savefig(f'figures/{self.name.lower()}/version_{self.version}/unique/{self.second}/District {self.number} allocation €{self.costs}')
+            else:
+                plt.savefig(f'figures/{self.name.lower()}/unique/{self.second}/District {self.number} allocation €{self.costs}')
         else:
-            plt.savefig(f'figures/{self.name.lower()}/unique/District {self.number} allocation €{self.costs}')
+            if self.version != None:
+                plt.savefig(f'figures/{self.name.lower()}/version_{self.version}/unique/District {self.number} allocation €{self.costs}')
+            else:
+                plt.savefig(f'figures/{self.name.lower()}/unique/District {self.number} allocation €{self.costs}')
 
     def show_shared(self):
-        for battery, houses in self.connections.items():
-            for house in houses:
-                paths = algorithm.mst[battery]
-                for x, y in paths:
-                    plt.plot(x, y, c=battery.color)
+        for battery in self.connections.keys():
+            paths = self.mst[battery]
+            for x, y in paths:
+                plt.plot(x, y, c=battery.color)
         
         plt.title(f"District {self.number} allocation €{self.costs}")
-
-        if self.version != None:
-            plt.savefig(f'figures/{self.name.lower()}/version_{self.version}/shared/District {self.number} allocation €{self.costs}')
+        
+        if self.second != None:
+            if self.version != None:
+                plt.savefig(f'figures/{self.name.lower()}/version_{self.version}/shared/{self.second}/District {self.number} allocation €{self.costs}')
+            else:
+                plt.savefig(f'figures/{self.name.lower()}/shared/{self.second}/District {self.number} allocation €{self.costs}')
         else:
-            plt.savefig(f'figures/{self.name.lower()}/shared/District {self.number} allocation €{selflgo.costs}')
+            if self.version != None:
+                plt.savefig(f'figures/{self.name.lower()}/version_{self.version}/shared/District {self.number} allocation €{self.costs}')
+            else:
+                plt.savefig(f'figures/{self.name.lower()}/shared/District {self.number} allocation €{self.costs}')

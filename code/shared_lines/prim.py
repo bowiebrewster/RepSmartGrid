@@ -4,7 +4,6 @@ import copy
 def create_mst(connections):
     forest_costs = []
     mst = {}
-    # connections = copy.deepcopy(connections)
 
     for battery, houses in connections.items():
         houses = copy.deepcopy(houses)

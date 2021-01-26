@@ -10,6 +10,19 @@ import numpy as np
 # import collections
 import math
 
+with open('sa_costs.txt', 'r') as file:
+    raw = file.readlines()
+costs = []
+for line in raw:
+    cost = int(line[17:])
+    costs.append(cost)
+plt.figure()
+plt.plot(costs)
+plt.show()
+
+
+
+
 # path = f'data/district_1/district-1_'
 # files = [path + 'batteries.csv', path + 'houses.csv'] # de twee bestanden opslaan in lijst
 # for filename in files:
@@ -83,58 +96,58 @@ import math
 # print(r)
 # print(r)
 
-def f(x):
-    return math.cos(x) + math.sin(x) + 10 * math.sin(0.1 * x)
+# def f(x):
+#     return math.cos(x) + math.sin(x) + 10 * math.sin(0.1 * x)
 
-def acceptance_probability(s_old, s_new, temp):
-    if s_new < s_old:
-        return 1.0
-    else:
-        return math.exp((s_old - s_new) / temp)
+# def acceptance_probability(s_old, s_new, temp):
+#     if s_new < s_old:
+#         return 1.0
+#     else:
+#         return math.exp((s_old - s_new) / temp)
 
-def main(cr, start_temp, k_max=300):
-    # start_temp = 30
-    # k_max = 300
-    # alpha = 0.01
-    current_E = f(random.uniform(0, 50))
-    current_temp = start_temp
-    i = 0
-    while current_temp > 0.01:
-        current_temp = start_temp * (1 - cr)**i # current_temp -= cr
-        for k in range(k_max):
-            new_E = f(random.uniform(0, 50))
-            if acceptance_probability(current_E, new_E, current_temp) >= random.random():
-                current_E = new_E
-        i += 1
+# def main(cr, start_temp, k_max=300):
+#     # start_temp = 30
+#     # k_max = 300
+#     # alpha = 0.01
+#     current_E = f(random.uniform(0, 50))
+#     current_temp = start_temp
+#     i = 0
+#     while current_temp > 0.01:
+#         current_temp = start_temp * (1 - cr)**i # current_temp -= cr
+#         for k in range(k_max):
+#             new_E = f(random.uniform(0, 50))
+#             if acceptance_probability(current_E, new_E, current_temp) >= random.random():
+#                 current_E = new_E
+#         i += 1
 
-    return current_E
+#     return current_E
 
-if __name__ == '__main__':
-    # x represents cooling rate
-    # y represents temperature
-    # print(main(0.001, 20))
-    xx = np.linspace(0.001, 0.1, num=100)
-    yy = np.linspace(20, 40, num=100)
-    X, Y = np.meshgrid(xx, yy)
-    Z = []
-    for Xrow, Yrow in zip(X, Y):
-        z = []
-        for cr, start_temp in zip(Xrow, Yrow):
-            z.append(main(cr, start_temp))
-        Z.append(z)
-        if len(Z) % 10 == 0:
-            print(f'Hoppakee, 10% erbij bro')
+# if __name__ == '__main__':
+#     # x represents cooling rate
+#     # y represents temperature
+#     # print(main(0.001, 20))
+#     xx = np.linspace(0.001, 0.1, num=100)
+#     yy = np.linspace(20, 40, num=100)
+#     X, Y = np.meshgrid(xx, yy)
+#     Z = []
+#     for Xrow, Yrow in zip(X, Y):
+#         z = []
+#         for cr, start_temp in zip(Xrow, Yrow):
+#             z.append(main(cr, start_temp))
+#         Z.append(z)
+#         if len(Z) % 10 == 0:
+#             print(f'Hoppakee, 10% erbij bro')
   
-    Z = np.array(Z)
+#     Z = np.array(Z)
     
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-    ax.plot_surface(X, Y, Z, cmap=cm.coolwarm,
-                       linewidth=0, antialiased=False)
+#     fig = plt.figure()
+#     ax = fig.add_subplot(111, projection='3d')
+#     ax.plot_surface(X, Y, Z, cmap=cm.coolwarm,
+#                        linewidth=0, antialiased=False)
     
-    plt.show()
-    m = np.amin(Z)
-    print(m)
+#     plt.show()
+#     m = np.amin(Z)
+#     print(m)
 
     # for i in range(1000):
     #     if i % 100 == 0:

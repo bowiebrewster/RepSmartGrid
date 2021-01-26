@@ -1,7 +1,7 @@
 import math
 import random
 import time
-# from code.visualisation.visualise import show_sa
+from code.visualisation import visualise
 from code.shared_lines import prim
 
 class SimulatedAnnealing:
@@ -11,7 +11,7 @@ class SimulatedAnnealing:
         self.districtnumber = algo.districtnumber
         self.name = algo.name
 
-    def run_unique(self, cr, start_temp, save, k_max=50):
+    def run_unique(self, cr, start_temp, mst, save, k_max=50):
         current_temp = start_temp
         current_E = self.calculate_costs()
 
@@ -41,21 +41,29 @@ class SimulatedAnnealing:
 
         # final (global) minimum without mst
         print(f"The allocation after simulated annealing costs €{current_E}")
-        self.costs = current_E
+        # self.costs = current_E
 
-        # if save:
-        #     show_sa(self, shared=False)
+        if save:
+            self.mst, fc = prim.create_mst(self.connections)
+            self.costs = sum(fc)
+            print(f"The allocation with MST costs €{self.costs}")
+            grid = visualise.Grid(self.connections, True, self.name, self.districtnumber, self.costs, self.mst, version=None, second='sa')
     
-    def run_shared(self, cr, start_temp, save, k_max=10):
+    def run_shared(self, cr, start_temp, mst, save, k_max=100):
+        f = open("testing.txt", "a")
+
         current_temp = start_temp
 
         _, current_Es = prim.create_mst(self.connections)
         current_E = sum(current_Es) 
+        
+        i = 0
 
-        while current_temp > 0.1:
-            current_temp -= cr # linear
+        while current_temp > 0.02:
+            current_temp = start_temp * (1 - cr)**i
+            # current_temp -= cr
 
-            if current_temp < 0:
+            if current_temp < 0.02:
                 break
 
             for k in range(k_max):
@@ -75,14 +83,20 @@ class SimulatedAnnealing:
                 else:
                     self.reverse_swap(b1, b2, h1, h2)
 
+            i += 1
+
             print(f"The cost is now €{current_E}")
+            f.write(f"{current_E}\n")
+
+        f.close()
 
         # final (global) minimum with mst
         print(f"The allocation after simulated annealing costs €{current_E}")
         self.costs = current_E
+        self.mst, _ = prim.create_mst(self.connections)
 
-        # if save:
-        #     show_sa(self, shared=True)
+        if save:
+            grid = visualise.Grid(self.connections, mst, self.name, self.districtnumber, self.costs, self.mst, version=None, second='sa')
 
     def get_temp(self, k):
         return self.T0 / math.log(k)

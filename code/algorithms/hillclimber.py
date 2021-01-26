@@ -9,11 +9,11 @@ class HillClimber:
     if the swap gives a more optimal solution. If no swaps are possible anymore, the algorithm comes to a stop.
     '''
     def __init__(self, algo):
-        self.name = 'Hill Climber'
+        self.name = algo.name
         self.districtnumber = algo.districtnumber
         self.connections = algo.connections
 
-    def run_unique(self, k_max=100):
+    def run_unique(self, mst, save, k_max=100):
         current_E = self.calculate_costs()
 
         for k in range(k_max):
@@ -32,8 +32,12 @@ class HillClimber:
 
         # final (global) minimum without mst
         print(f"The cost of the allocation after hill climber is €{current_E}.")
+        self.costs = current_E
+
+        if save:
+            grid = visualise.Grid(self.connections, mst, self.name, self.districtnumber, self.costs, mst=None, version=None, second='hc')
     
-    def run_shared(self, k_max=10):
+    def run_shared(self, mst, save, k_max=10):
 
         _, current_Es = prim.create_mst(self.connections)
         current_E = sum(current_Es) 
@@ -57,7 +61,11 @@ class HillClimber:
 
         # final (global) minimum with mst
         print(f"The cost of the allocation after hill climber is €{current_E}.")
+        self.costs = current_E
 
+        if save:
+            grid = visualise.Grid(self.connections, mst, self.name, self.districtnumber, self.costs, mst=None, version=None, second='hc')
+    
     def get_random_batteries(self):
         random_batteries = random.sample(list(self.connections.items()), 2)
             

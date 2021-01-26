@@ -26,9 +26,9 @@ if __name__ == "__main__":
         while version != 1 and version != 2:
             version = int(input("What version of greedy would you like to implement? "))
 
-    mst = input("Do you want to share lines? Type y(es) or n(o). ")
+    shared = input("Do you want to share lines? Type y(es) or n(o). ")
     while 'y' not in mst.lower() and 'n' not in mst.lower():
-        mst = input("Do you want to share lines? Type y(es) or n(o). ")
+        shared = input("Do you want to share lines? Type y(es) or n(o). ")
 
     save = input("Do you want to save the figure? Type y(es) or n(o). ")
     while 'y' not in save.lower() and 'n' not in save.lower():
@@ -52,7 +52,9 @@ if __name__ == "__main__":
         save = False
 
     try:
+        print("hoi")
         if version == 1:
+            print("hallo")
             algo.run_v1(mst, save)
         elif version == 2:
             algo.run_v2(mst, save)
@@ -71,18 +73,21 @@ if __name__ == "__main__":
     if 'y' in better:
         if 'hc' in algo2:
             hc = hillclimber.HillClimber(algo)
-            if mst:
-                hc.run_shared()
+            if shared:
+                hc.run_shared(shared, save)
             else:
-                hc.run_unique()
+                hc.run_unique(shared, save)
         elif 'sa' in algo2:
             sa = simulatedannealing.SimulatedAnnealing(algo)
-            start_temp = float(input("With what temperature do you want to start simulated annealing? "))
-            cr = float(input("With what cooling rate do you want to decrease the temperature? "))
-            if mst:
-                sa.run_shared(cr, start_temp, save)
+            if shared:
+                sa.run_shared(0.01, 25, shared, save)
             else:
-                sa.run_unique(cr, start_temp, save)
+                sa.run_unique(0.01, 25, shared, save)
+
+    # 29950
+    # 29977
+    # 30607
+    # 32533
 
     # xx = np.linspace(0.5, 1, num=10) # cooling rate
     # yy = np.linspace(20, 40, num=3) # Temperature

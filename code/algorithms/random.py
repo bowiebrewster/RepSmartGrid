@@ -28,15 +28,16 @@ class Random:
             j += 1
 
         print("Feasible allocation found!")
-        if save:
-            if mst:
-                self.mst, fc = prim.create_mst(self.connections)
-                self.costs = sum(fc)
-            else: 
-                self.calculate_costs()
+        if mst:
+            self.mst, fc = prim.create_mst(self.connections)
+            self.costs = sum(fc)
+        else: 
+            self.mst = None
+            self.calculate_costs()
 
-            print(f"This allocation costs €{self.costs}")
-            grid = visualise.Grid(self.connections, mst, self.name, self.districtnumber, self.costs, version=None)
+        print(f"This allocation costs €{self.costs}")
+        if save:
+            grid = visualise.Grid(self.connections, mst, self.name, self.districtnumber, self.costs, self.mst, version=None)
 
     def is_feasible(self):
         for battery, houses in self.connections.items():

@@ -48,17 +48,18 @@ class Greedy:
                     else:
                         battery.is_full = True
 
-            if self.feasible_allocation() and i == 118:
+            if self.feasible_allocation() and i == 119:
                 print("Feasible allocation found!")
-                if save:
-                    if mst:
-                        self.mst, fc = prim.create_mst(self.connections)
-                        self.costs = sum(fc)
-                    else: 
-                        self.calculate_costs()
+                if mst:
+                    self.mst, fc = prim.create_mst(self.connections)
+                    self.costs = sum(fc)
+                else:
+                    self.mst = None
 
-                    print(f"This allocation costs €{self.costs}")
-                    grid = visualise.Grid(self.connections, mst, self.name, self.districtnumber, self.costs, self.version)
+                print(f"This allocation costs €{self.costs}")
+
+                if save:
+                    grid = visualise.Grid(self.connections, mst, self.name, self.districtnumber, self.costs, self.mst, self.version)
                 
             self.reset()
 
@@ -96,15 +97,17 @@ class Greedy:
 
         if self.feasible_allocation():
             print("Feasible allocation found!")
-            if save:
-                if mst:
-                    self.mst, fc = prim.create_mst(self.connections)
-                    self.costs = sum(fc)
-                else: 
-                    self.calculate_costs()
 
-                print(f"This allocation costs €{self.costs}")
-                grid = visualise.Grid(self.connections, mst, self.name, self.districtnumber, self.costs, self.version)
+            if mst:
+                self.mst, fc = prim.create_mst(self.connections)
+                self.costs = sum(fc)
+            else:
+                self.calculate_costs()
+
+            print(f"This allocation costs €{self.costs}")
+
+            if save:
+                grid = visualise.Grid(self.connections, mst, self.name, self.districtnumber, self.costs, self.mst, self.version)
         else:
             print("No feasible allocation found :(")
 
