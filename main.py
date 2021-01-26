@@ -11,28 +11,29 @@ from code.algorithms import greedy, random, simulatedannealing, hillclimber
 from code.visualisation import visualise
 
 if __name__ == "__main__":
-    number = int(input("What district would you like to optimize? "))
-    while number != 1 and number != 2 and number != 3:
-        number = int(input("What district would you like to optimize? "))
+    number = input("What district would you like to optimize? ")
+    while number != 1 and number != 2 and number != 3 and number == '':
+        number = input("What district would you like to optimize? ")
+    number = int(number)
 
     algo1 = input("What algorithm would you like to apply? Type 'r' for random and 'g' for greedy. ")
-    while algo1.lower()[0] != 'r' and algo1.lower()[0] != 'g':
+    while algo1.lower()[0] != 'r' and algo1.lower()[0] != 'g' and algo1 == '':
         algo1 = input("What algorithm would you like to apply? Type 'r' for random and 'g' for greedy. ")
     
     if 'g' in algo1:
         print("In greedy version 1 we put the batteries in a certain order and connect them one for one with the closest houses.")
         print("In greedy version 2 we sort the houses based on their output and then we connect each house with the closest battery.")
-        print("In greedy version 3 we pick the batteries with the most capacity left and we connect it with the closest house.")
-        version = int(input("Would you like to run version 1, 2 or 3 of greedy? Type 1 for version 1, 2 for version 2 and 3 for version 3. "))
-        while version != 1 and version != 2 and version != 3:
-            version = int(input("What version of greedy would you like to implement? "))
+        version = input("Would you like to run version 1 or 2 of greedy? Type 1 for version 1 and 2 for version 2. ")
+        while version != 1 and version != 2 and version == '':
+            version = input("What version of greedy would you like to implement? ")
+        version = int(version)
 
     shared1 = input("Do you want to share lines? Type y(es) or n(o). ")
-    while shared1.lower()[0] != 'y' and shared1.lower()[0] != 'n':
+    while shared1.lower()[0] != 'y' and shared1.lower()[0] != 'n' and shared1 == '':
         shared1 = input("Do you want to share lines? Type y(es) or n(o). ")
 
     save1 = input("Do you want to save the figure? Type y(es) or n(o). ")
-    while save1.lower()[0] != 'y' and save1.lower()[0] != 'n':
+    while save1.lower()[0] != 'y' and save1.lower()[0] != 'n' and save1 == '':
         save1 = input("Do you want to save the figure? Type y(es) or n(o). ")
     
     print()
@@ -59,13 +60,11 @@ if __name__ == "__main__":
             algo.run_v1(shared1, save1)
         elif version == 2:
             algo.run_v2(shared1, save1)
-        elif version == 3:
-            algo.run_v3(shared1, save1)
     except:
         algo.run(shared1, save1)
     end1 = time.time()
-    print()
     if algo.feasible:
+        print()
         print(f"The algorithm found a solution in {end1 - start1} seconds.")
     else:
         print(f"The algorithm has found no feasible solution.")
@@ -73,7 +72,7 @@ if __name__ == "__main__":
     print()
 
     better = input("Would you like to improve this result? Type y(es) or n(o). ")
-    while better.lower()[0] != 'y' and better.lower()[0] != 'n':
+    while better.lower()[0] != 'y' and better.lower()[0] != 'n' and better == '':
         better = input("Would you like to improve previous result? Type y(es) or n(o). ")
     
     if better.lower()[0] == 'n':
@@ -81,15 +80,15 @@ if __name__ == "__main__":
 
     if 'y' in better.lower():
         algo2 = input("What second algorithm would you like to apply? Type 'hc' for hill climber and 'sa' for simulated annealing. ")
-        while algo2.lower()[0] != 'h' and algo2.lower()[0] != 's':
+        while algo2.lower()[0] != 'h' and algo2.lower()[0] != 's' and algo2 == '':
             algo2 = input("What second algorithm would you like to apply? Type 'hc' for hill climber and 'sa' for simulated annealing. ")
 
     shared2 = input("Do you want to share lines in the second algorithm? Type y(es) or n(o). ")
-    while shared2.lower()[0] != 'y' and shared2.lower()[0] != 'n':
+    while shared2.lower()[0] != 'y' and shared2.lower()[0] != 'n' and shared2 == '':
         shared2 = input("Do you want to share lines? Type y(es) or n(o). ")
 
     save2 = input("Do you want to save the figure of the second algorithm's allocation? Type y(es) or n(o). ")
-    while save2.lower()[0] != 'y' and save2.lower()[0] != 'n':
+    while save2.lower()[0] != 'y' and save2.lower()[0] != 'n' and save2 == '':
         save2 = input("Do you want to save the figure? Type y(es) or n(o). ")
 
     if 'y' in shared2:
@@ -120,27 +119,3 @@ if __name__ == "__main__":
     end2 = time.time()
     print()
     print(f"The second algorithm found a solution in {end2 - start2} seconds.")
-
-    # xx = np.linspace(0.01, 0.05, num=100) # cooling rate
-    # yy = np.linspace(20, 40, num=100) # Temperature
-    # X, Y = np.meshgrid(xx, yy)
-    # Z = []
-    # for Xrow, Yrow in zip(X, Y):
-    #     z = []
-    #     for cr, start_temp in zip(Xrow, Yrow):
-    #         z.append(sa.calibrate(cr, start_temp))
-    #     Z.append(z)
-    #     if len(Z) % 3 == 0:
-    #         print(f'Hoppakee, 10% erbij bro')
-  
-    # Z = np.array(Z)
-    
-    # fig = plt.figure()
-    # ax = fig.add_subplot(111, projection='3d')
-    # ax.plot_surface(X, Y, Z, cmap=cm.coolwarm,
-    #                    linewidth=0)
-    # i, j  = np.unravel_index(Z.argmin(), Z.shape())
-    # print(f'Best i = {i} - Best j = {j}')
-    # print(Z[i][j])
-    # print(f'{time.time() - start}')
-    # plt.show()

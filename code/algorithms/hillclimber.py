@@ -22,7 +22,7 @@ class HillClimber:
             # make random swap
             b1, b2, h1, h2 = self.get_random_batteries()
             self.swap(b1, b2, h1, h2)
-            new_E = self.calculate_costs()
+            new_E = self.update_costs(b1, b2, h1, h2)
 
             if not self.is_feasible():
                 new_E += 500
@@ -31,6 +31,7 @@ class HillClimber:
                 current_E = new_E
             else:
                 self.reverse_swap(b1, b2, h1, h2)
+                self.update_costs(b1, b2, h2, h1)
 
         if shared:
             self.mst, fc = prim.create_mst(self.connections)
@@ -118,4 +119,13 @@ class HillClimber:
         for battery, houses in self.connections.items():
             for house in houses:
                 self.costs += 9 * self.get_mhd(battery, house)
+        return self.costs
+
+    def update_costs(self, batt1, batt2, house1, house2):
+        # update costs
+        self.costs -= 9 * self.get_mhd(batt1, house1)
+        self.costs -= 9 * self.get_mhd(batt2, house2)
+        self.costs += 9 * self.get_mhd(batt1, house2)
+        self.costs += 9 * self.get_mhd(batt2, house1)
+
         return self.costs

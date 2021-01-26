@@ -12,7 +12,7 @@ class SimulatedAnnealing:
         self.districtnumber = algo.districtnumber
         self.name = algo.name
 
-    def run_unique(self, cr, start_temp, shared, save, version, k_max=100):
+    def run_unique(self, cr, start_temp, shared, save, version, k_max=150):
         current_temp = start_temp
         current_E = self.calculate_costs()
 
@@ -28,7 +28,7 @@ class SimulatedAnnealing:
                 # make random swap
                 b1, b2, h1, h2 = self.get_random_batteries()
                 self.swap(b1, b2, h1, h2)
-                new_E = self.calculate_costs()
+                new_E = self.update_costs(b1, b2, h1, h2)
 
                 if not self.is_feasible():
                     new_E += 500
@@ -37,6 +37,8 @@ class SimulatedAnnealing:
                     current_E = new_E
                 else:
                     self.reverse_swap(b1, b2, h1, h2)
+                    current_E = self.update_costs(b1, b2, h2, h1)
+            
             i += 1
             print(f"The cost is now €{current_E}.")
 
@@ -105,9 +107,6 @@ class SimulatedAnnealing:
 
         if save:
             grid = visualise.Grid(self.connections, mst, self.name, self.districtnumber, self.costs, self.mst, version=None, second='sa')
-
-    def get_temp(self, k):
-        return self.T0 / math.log(k)
     
     def acceptance_prob(self, current_E, new_E, T):
         if new_E < current_E:
@@ -125,19 +124,19 @@ class SimulatedAnnealing:
 
         return batt1, batt2, random_house1, random_house2
 
-    def swap(self, batt1, batt2, rh1, rh2):
-        self.connections[batt1].remove(rh1)
-        self.connections[batt2].remove(rh2)
+    def swap(self, batt1, batt2, house1, house2):
+        self.connections[batt1].remove(house1)
+        self.connections[batt2].remove(house2)
 
-        self.connections[batt1].append(rh2)
-        self.connections[batt2].append(rh1)
+        self.connections[batt1].append(house2)
+        self.connections[batt2].append(house1)
 
-    def reverse_swap(self, batt1, batt2, rh1, rh2):
-        self.connections[batt1].remove(rh2)
-        self.connections[batt2].remove(rh1)
+    def reverse_swap(self, batt1, batt2, house1, house2):
+        self.connections[batt1].remove(house2)
+        self.connections[batt2].remove(house1)
 
-        self.connections[batt1].append(rh1)
-        self.connections[batt2].append(rh2)
+        self.connections[batt1].append(house1)
+        self.connections[batt2].append(house2)
 
     def is_feasible(self):
         for battery, houses in self.connections.items():
@@ -150,8 +149,17 @@ class SimulatedAnnealing:
         return abs(battery.x - house.x) + abs(battery.y - house.y)
 
     def calculate_costs(self):
-        self.costs = 5000 * len(list(self.connections.keys()))
+        self.costs = 25000
         for battery, houses in self.connections.items():
             for house in houses:
                 self.costs += 9 * self.get_mhd(battery, house)
+        return self.costs
+
+    def update_costs(self, batt1, batt2, house1, house2):
+        # update costs
+        self.costs -= 9 * self.get_mhd(batt1, house1)
+        self.costs -= 9 * self.get_mhd(batt2, house2)
+        self.costs += 9 * self.get_mhd(batt1, house2)
+        self.costs += 9 * self.get_mhd(batt2, house1)
+
         return self.costs
