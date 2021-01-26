@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 
 class Grid:
 
-    def __init__(self, connections, shared, name, number, costs, mst=None, version=None, second=None):
+    def __init__(self, connections, shared, name, number, costs, mst, version, second=None):
         self.connections = connections
         self.shared = shared
         self.name = name

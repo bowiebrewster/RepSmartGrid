@@ -10,15 +10,23 @@ import numpy as np
 # import collections
 import math
 
-with open('sa_costs.txt', 'r') as file:
-    raw = file.readlines()
-costs = []
-for line in raw:
-    cost = int(line[17:])
-    costs.append(cost)
-plt.figure()
-plt.plot(costs)
-plt.show()
+b = {'1': 1432.9999, '2': 103, '3': 5703}
+a = {k: v for k, v in sorted(b.items(), key=lambda item: item[1])}
+print(a)
+
+
+
+#
+# 
+#  with open('sa_costs.txt', 'r') as file:
+#     raw = file.readlines()
+# costs = []
+# for line in raw:
+#     cost = int(line[17:])
+#     costs.append(cost)
+# plt.figure()
+# plt.plot(costs)
+# plt.show()
 
 
 

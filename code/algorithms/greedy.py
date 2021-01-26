@@ -23,15 +23,16 @@ class Greedy:
     def batteries_distances(self, house):
         return {battery: self.get_mhd(battery, house) for battery in self.batteries if not battery.is_full}
     
-    def run_v1(self, mst, save):
+    def run_v1(self, shared, save):
         '''
         Per battery in a specific order, the closest houses are allocated 
         to that specific battery until the battery capacity is maxed out.
         Then the next battery in the order is chosen to fill up with houses.
         '''
 
+        all_allocations = {}
+
         self.version = 1
-        print("Let's get version 1 running!")
 
         orderings = list(itertools.permutations(self.batteries, 5))
         for i, battery_ordering in enumerate(orderings):
@@ -48,68 +49,72 @@ class Greedy:
                     else:
                         battery.is_full = True
 
-            if self.feasible_allocation() and i == 119:
+            if self.feasible_allocation():
+
                 print("Feasible allocation found!")
-                if mst:
+
+                if shared:
                     self.mst, fc = prim.create_mst(self.connections)
                     self.costs = sum(fc)
                 else:
                     self.mst = None
 
-                print(f"This allocation costs €{self.costs}")
+                print(f"This allocation costs €{self.costs}.")
+
+                connections = copy.deepcopy(self.connections)
+                all_allocations[self.costs] = connections
 
                 if save:
-                    grid = visualise.Grid(self.connections, mst, self.name, self.districtnumber, self.costs, self.mst, self.version)
+                    grid = visualise.Grid(self.connections, shared, self.name, self.districtnumber, self.costs, self.mst, self.version)
                 
             self.reset()
+        
+        # we move forward with the smallest cost
+        try:
+            self.costs, self.connections = min(all_allocations.items(), key=lambda x: x[0])
+            self.feasible = True
+        except:
+            self.feasible = False
 
-    def run_v2(self, mst, save):
+    def run_v2(self, shared, save):
         self.version = 2
-        print("Let's get version 2 running!")
-        house_output = {house: house.output for house in self.houses if house.is_available}
 
-        i = 0
-        while house_output and i <= 150:
-            if i % 10 ==0:
-                print(i)
-
+        for i in range(len(self.houses)):
+            house_output = {house: house.output for house in self.houses if house.is_available}
             house_to_add = max(house_output, key=house_output.get)
             distances = self.batteries_distances(house_to_add)
-
-            if distances:
-                battery_to_connect = min(distances, key=distances.get)
-                if battery_to_connect.is_feasible(house_to_add):
-                    self.connections[battery_to_connect].append(house_to_add)
-                    del house_output[house_to_add]
-                    mhd = distances.pop(battery_to_connect)
-                    self.costs += 9 * mhd
-                else:
-                    for battery in distances.keys():
-                        if battery.is_feasible(house_to_add):
-                            self.connections[battery].append(house_to_add)
-                            self.costs += 9 * distances[battery_to_connect]
-                            del house_output[house_to_add]
-                            house_to_add.is_available = False
-                            break  
-                        else:
-                            battery_to_connect.is_full = True
-            i += 1
+            battery_to_connect = min(distances, key=distances.get)
+            
+            if battery_to_connect.is_feasible(house_to_add):
+                self.connections[battery_to_connect].append(house_to_add)
+                house_to_add.is_available = False
+                mhd = distances[battery_to_connect]
+                self.costs += 9 * mhd
+            else:
+                for battery in self.batteries:
+                    if battery.is_feasible(house_to_add):
+                        self.connections[battery].append(house_to_add)
+                        house_to_add.is_available = False
+                        mhd = distances[battery]
+                        self.costs += 9 * mhd
+                        break
 
         if self.feasible_allocation():
+            self.feasible = True
             print("Feasible allocation found!")
 
-            if mst:
+            if shared:
                 self.mst, fc = prim.create_mst(self.connections)
                 self.costs = sum(fc)
             else:
-                self.calculate_costs()
+                self.mst = None
 
             print(f"This allocation costs €{self.costs}")
 
             if save:
-                grid = visualise.Grid(self.connections, mst, self.name, self.districtnumber, self.costs, self.mst, self.version)
+                grid = visualise.Grid(self.connections, shared, self.name, self.districtnumber, self.costs, self.mst, self.version)
         else:
-            print("No feasible allocation found :(")
+            self.feasible = False
 
     def feasible_allocation(self):
         if sum([len(x) for x in self.connections.values()]) == 150: 

@@ -1,6 +1,7 @@
 import math
 import random
 import time
+
 from code.visualisation import visualise
 from code.shared_lines import prim
 
@@ -11,7 +12,7 @@ class SimulatedAnnealing:
         self.districtnumber = algo.districtnumber
         self.name = algo.name
 
-    def run_unique(self, cr, start_temp, mst, save, k_max=50):
+    def run_unique(self, cr, start_temp, shared, save, version, k_max=100):
         current_temp = start_temp
         current_E = self.calculate_costs()
 
@@ -37,19 +38,26 @@ class SimulatedAnnealing:
                 else:
                     self.reverse_swap(b1, b2, h1, h2)
             i += 1
-            print(f"The cost is now €{current_E}")
+            print(f"The cost is now €{current_E}.")
 
-        # final (global) minimum without mst
-        print(f"The allocation after simulated annealing costs €{current_E}")
-        # self.costs = current_E
-
-        if save:
+        if shared:
             self.mst, fc = prim.create_mst(self.connections)
             self.costs = sum(fc)
-            print(f"The allocation with MST costs €{self.costs}")
-            grid = visualise.Grid(self.connections, True, self.name, self.districtnumber, self.costs, self.mst, version=None, second='sa')
+            print(f"The allocation with shared lines after simulated annealing costs €{self.costs}.")
+        else:
+            self.mst = None
+            self.costs = current_E
+            print(f"The allocation with unique lines after simulated annealing costs €{self.costs}.")
+        
+        if version != None:
+            self.version = version
+        else:
+            self.version = None
+
+        if save:
+            grid = visualise.Grid(self.connections, shared, self.name, self.districtnumber, self.costs, self.mst, self.version, second='sa')
     
-    def run_shared(self, cr, start_temp, mst, save, k_max=100):
+    def run_shared(self, cr, start_temp, shared, save, version, k_max=100):
         f = open("testing.txt", "a")
 
         current_temp = start_temp
