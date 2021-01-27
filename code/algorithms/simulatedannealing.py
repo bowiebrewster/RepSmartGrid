@@ -12,15 +12,12 @@ class SimulatedAnnealing:
         self.districtnumber = algo.districtnumber
         self.name = algo.name
 
-    def run_unique(self, cr, start_temp, shared, save, version, k_max=150):
+    def run_unique(self, cr, start_temp, shared, save, version, k_max=80):
         current_temp = start_temp
         current_E = self.calculate_costs()
 
         i = 0
-        while current_temp > 0.001:
-
-            if current_temp < 0:
-                break
+        while current_temp > 0.005:
 
             current_temp = start_temp * (1 - cr)**i # exponential
 
@@ -45,11 +42,11 @@ class SimulatedAnnealing:
         if shared:
             self.mst, fc = prim.create_mst(self.connections)
             self.costs = sum(fc)
-            print(f"The allocation with shared lines after simulated annealing costs €{self.costs}.")
+            print(f"\nThe allocation with shared lines after simulated annealing costs €{self.costs}.")
         else:
             self.mst = None
             self.costs = current_E
-            print(f"The allocation with unique lines after simulated annealing costs €{self.costs}.")
+            print(f"\nThe allocation with unique lines after simulated annealing costs €{self.costs}.")
         
         if version != None:
             self.version = version
@@ -188,5 +185,5 @@ class SimulatedAnnealing:
                     self.reverse_swap(b1, b2, h1, h2)
                     current_E = self.update_costs(b1, b2, h2, h1)
             i += 1
-            
+
         print(f"The cost is now €{current_E}.")

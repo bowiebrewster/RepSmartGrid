@@ -1,3 +1,5 @@
+import numpy as np
+
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from mpl_toolkits.mplot3d import Axes3D
@@ -5,13 +7,6 @@ from mpl_toolkits.mplot3d import Axes3D
 from code.algorithms import simulatedannealing as sa
 from code.algorithms import random as r
 from code.classes.district import District
-# import random
-# import copy
-import numpy as np
-# import operator
-# import itertools
-# import collections
-# import math
 
 district = District(2)
 algorithm = r.Random(district)

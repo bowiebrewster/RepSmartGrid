@@ -17,18 +17,13 @@ class Random:
         self.costs = 5000 * len(self.batteries)
 
     def run(self, mst, save):
-        j = 0
+
         while not self.is_feasible():
-            if j % 100 == 0:
-                print(j)
 
             random.shuffle(self.houses)
             for i, battery in enumerate(self.connections.keys()):
                 self.connections[battery] = self.houses[i * 30: (i + 1) * 30]
-            j += 1
 
-        print("Feasible allocation found!")
-        print()
         self.feasible = True
         
         if mst:
@@ -38,7 +33,8 @@ class Random:
             self.mst = None
             self.calculate_costs()
 
-        print(f"This allocation costs €{self.costs}.")
+        print(f"Feasible allocation found! This allocation costs €{self.costs}.")
+        
         if save:
             grid = visualise.Grid(self.connections, mst, self.name, self.districtnumber, self.costs, self.mst, version=None)
 
