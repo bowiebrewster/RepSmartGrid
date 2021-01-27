@@ -16,10 +16,6 @@ def create_mst(connections):
     for battery, houses in connections.items():
         houses = deepcopy(houses)
 
-        # plt.scatter(battery.x, battery.y, c=battery.color, marker='s')
-        # for house in houses:
-        #     plt.scatter(house.x, house.y, c=battery.color, marker='*')
-
         costs = 5000
         mst[battery] = []
 
@@ -50,19 +46,12 @@ def create_mst(connections):
             mst[battery].append((x, y))
         
         forest_costs.append(costs)
-
-        # paths = mst[battery]
-        # for x, y in paths:
-        #     plt.plot(x, y, c=battery.color)
-        # plt.xlim([-1, 51])
-        # plt.ylim([-1, 51])
-        # plt.show()
             
     return mst, forest_costs
 
 def pathfinder(from_node, to_node):
     """
-    Finds a path between two nodes using the Euclidian distance heuristic, 
+    Finds a path between two nodes using the squared Euclidian distance heuristic, 
     and returns the respective coordinates of said path.
     """
     startnode = Node(from_node, (from_node.x, from_node.y), None, to_node)

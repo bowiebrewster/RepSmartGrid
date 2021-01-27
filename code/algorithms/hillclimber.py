@@ -9,6 +9,7 @@ class HillClimber:
         self.name = algo.name
         self.districtnumber = algo.districtnumber
         self.connections = algo.connections
+        self.calculate_costs()
 
     def run(self, shared, save, version):
         """
@@ -16,7 +17,7 @@ class HillClimber:
         if the swap gives a more optimal solution. 
         """
         k_max = 100000
-        current_state = self.costs
+        current_E = self.costs
 
         for k in range(k_max):
             
@@ -27,8 +28,8 @@ class HillClimber:
             if not self.is_feasible():
                 new_E += 500
 
-            if new_state < current_state:
-                current_state = new_state
+            if new_E < current_E:
+                current_E = new_E
             else:
                 self.swap(b1, b2, h2, h1)
                 self.update_costs(b1, b2, h2, h1)
@@ -39,7 +40,7 @@ class HillClimber:
             print(f"The allocation with shared lines after hill climber costs €{self.costs}")
         else:
             self.mst = None
-            self.costs = current_state
+            self.costs = current_E
             print(f"The allocation with unique lines after hill climber costs €{self.costs}")
 
         if version != None:

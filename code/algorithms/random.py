@@ -34,12 +34,6 @@ class Random:
             self.calculate_costs()
 
         print(f"Feasible allocation found! This allocation costs €{self.costs}.")
-        
-        # for i, houses in enumerate(self.connections.values()):
-        #     print(i + 1)
-        #     print("----------")
-        #     for house in houses.sort(key=lambda x: x.number):
-        #         print(house)
 
         if save:
             Grid(self.connections, shared, self.name, self.districtnumber, self.costs, self.mst, version=None)

@@ -17,7 +17,7 @@ class SimulatedAnnealing:
         Given a cooling rate and start temperature, the simulated annealing algorithm finds a (global) minimum.
         With each temperature, the simulated annealing heuristic considers a random new state and probabilistically decides whether or not to accept this new state.
         """
-        k_max = 200
+        k_max = 1000
         current_temp = start_temp
         current_E = self.costs
 
@@ -31,7 +31,7 @@ class SimulatedAnnealing:
                 new_E = self.update_costs(b1, b2, h1, h2)
 
                 if not self.is_feasible():
-                    new_E += 500
+                    new_E += 300
 
                 if self.acceptance_prob(current_E, new_E, current_temp) >= random():
                     current_E = new_E
@@ -47,7 +47,7 @@ class SimulatedAnnealing:
             print(f"\nThe allocation with shared lines after simulated annealing costs €{self.costs}.")
         else:
             self.mst = None
-            self.costs = current_state
+            self.costs = current_E
             print(f"\nThe allocation with unique lines after simulated annealing costs €{self.costs}.")
         
         if version != None:
