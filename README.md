@@ -25,8 +25,7 @@ Bij het Hill Climber algoritme worden er vanuit een start-oplossing telkens twee
 ### Hill Climber
 Hill Climber begint bij een begin staat in het systeem dat gedefinieerd wordt door de connecties tussen de batterijen en hun respectievelijke huizen. Vervolgens wordt een swap, waarbij een huis van een batterij wordt losgemaakt en aan een andere batterij wordt vastgemaakt, uitgeprobeerd. Als de swap als resultaat de totale kosten van het systeem verlaagt wordt de swap definitief gemaakt en wordt er opnieuw gezocht naar een andere swap. Dit process is vergelijkbaar met Newtons algoritme en loopt tegen soortgelijke problemen op met lokale minima. Het is nuttig om de twee algoritmes, hun toepassingen en de limieten van hun toepassingen te vergelijken. Newton's algoritme wordt typisch weergegeven als een algoritme toepasselijk op een eendimensionale continue ruimte. Het algoritme begint op een punt in de functie en neemt vervolgens (numeriek) de afgeleide waarna een stap genomen op de x-as evenredig met de afgeleide. Als een piek word wordt bereikt is de afgeleide en dus de stapgrootte nul en is er een lokaal optimum bereikt. En als de functie numeriek doorschiet voorbij de piek verandert de afgeleide van teken en wordt een stap in de omgekeerde richting gemaakt. In ons probleem is er geen continue ruimte, een swap kan namelijk niet (nuttig) worden opgedeeld in kleinere swaps. Omdat er 150*149 swaps mogelijk zijn is de ruimte die hillclimber probeert te optimaliseren 150*149 dimensionaal en discreet. Omdat de ruimte veel “groter” is zijn er een veel groter aantal lokale minima en is dus de kans dat het minimum dat hillclimber vind het globale minimum is erg klein.
 
-### Simulated Annealing
-(pseudocode):
+### Simulated Annealing Pseudocode
 - Kies een random start state
 - Kies start temperatuur
 - Herhaal n iteraties:
