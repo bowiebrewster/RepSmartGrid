@@ -1,8 +1,10 @@
-import itertools, math
+from itertools import count
+from math import sqrt
+
 
 class Node:
     
-    number = itertools.count()
+    number = count()
 
     def __init__(self, start_node, coordinates, parent, target_node):
         self.idnr = next(Node.number)

@@ -1,8 +1,8 @@
 from .battery import Battery
 from .house import House
 
-class District():
 
+class District():
     def __init__(self, number):
         self.number = number
         self.path = f'data/district_{number}/district-{number}_'
@@ -11,6 +11,9 @@ class District():
         self.load_files()
 
     def load_files(self):
+        """
+        Loads data and creates Battery and House objects in the process.
+        """
         files = [self.path + 'batteries.csv', self.path + 'houses.csv']
         for filename in files:
             with open(filename, 'r') as file:

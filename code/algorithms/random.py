@@ -1,33 +1,33 @@
-import copy
-import random
-from code.visualisation import visualise
-from code.shared_lines import prim
+from copy import deepcopy
+from random import shuffle
+
+from code.visualisation.visualise import Grid
+from code.shared_lines.prim import create_mst
+
 
 class Random:
-    '''
-    Randomly allocates 30 houses per battery
-    Repeats this process until a feasible allocation is found
-    '''
     def __init__(self, district):
         self.name = 'Random'
         self.districtnumber = district.number
-        self.houses = copy.deepcopy(district.houses)
+        self.houses = deepcopy(district.houses)
         self.batteries = district.batteries
         self.connections = {battery: [] for battery in self.batteries}
-        self.costs = 5000 * len(self.batteries)
 
-    def run(self, mst, save):
-
+    def run(self, shared, save):
+        """
+        Randomly allocates 30 houses per battery. 
+        The algorithm repeats this process until a feasible allocation is found.
+        """
         while not self.is_feasible():
 
-            random.shuffle(self.houses)
+            shuffle(self.houses)
             for i, battery in enumerate(self.connections.keys()):
                 self.connections[battery] = self.houses[i * 30: (i + 1) * 30]
 
         self.feasible = True
         
-        if mst:
-            self.mst, fc = prim.create_mst(self.connections)
+        if shared:
+            self.mst, fc = create_mst(self.connections)
             self.costs = sum(fc)
         else: 
             self.mst = None
@@ -35,10 +35,19 @@ class Random:
 
         print(f"Feasible allocation found! This allocation costs €{self.costs}.")
         
+        # for i, houses in enumerate(self.connections.values()):
+        #     print(i + 1)
+        #     print("----------")
+        #     for house in houses.sort(key=lambda x: x.number):
+        #         print(house)
+
         if save:
-            grid = visualise.Grid(self.connections, mst, self.name, self.districtnumber, self.costs, self.mst, version=None)
+            Grid(self.connections, shared, self.name, self.districtnumber, self.costs, self.mst, version=None)
 
     def is_feasible(self):
+        """
+        Returns true if allocation is feasible.
+        """
         for battery, houses in self.connections.items():
             total_output = sum([house.output for house in houses])
             if not houses or total_output > battery.capacity:
@@ -46,9 +55,16 @@ class Random:
         return True
 
     def calculate_costs(self):
+        """
+        Calculates the total costs of the allocation.
+        """
+        self.costs = 5000 * len(self.connections.keys())
         for battery, houses in self.connections.items():
             for house in houses:
                 self.costs += 9 * self.get_mhd(battery, house)
 
     def get_mhd(self, battery, house):
+        """
+        Returns the manhattan distance between battery and house.
+        """
         return abs(battery.x - house.x) + abs(battery.y - house.y)

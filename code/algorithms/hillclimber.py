@@ -1,25 +1,25 @@
-from .random import Random
-from code.visualisation import visualise
-from code.shared_lines import prim
+from random import sample, choice
 
-import random
-import copy
+from code.visualisation.visualise import Grid
+from code.shared_lines.prim import create_mst
+
 
 class HillClimber:
-    '''
-    The hill climber algorithm starts with a feasible solution. It then makes random swaps between houses and batteries,
-    if the swap gives a more optimal solution. If no swaps are possible anymore, the algorithm comes to a stop.
-    '''
     def __init__(self, algo):
         self.name = algo.name
         self.districtnumber = algo.districtnumber
         self.connections = algo.connections
 
-    def run_unique(self, shared, save, version, k_max=100000):
-        current_E = self.calculate_costs()
+    def run(self, shared, save, version):
+        """
+        The hill climber algorithm starts with a feasible solution. It then makes random swaps between houses and batteries,
+        if the swap gives a more optimal solution. 
+        """
+        k_max = 100000
+        current_state = self.costs
 
         for k in range(k_max):
-            # make random swap
+            
             b1, b2, h1, h2 = self.get_random_batteries()
             self.swap(b1, b2, h1, h2)
             new_E = self.update_costs(b1, b2, h1, h2)
@@ -27,19 +27,19 @@ class HillClimber:
             if not self.is_feasible():
                 new_E += 500
 
-            if new_E < current_E:
-                current_E = new_E
+            if new_state < current_state:
+                current_state = new_state
             else:
-                self.reverse_swap(b1, b2, h1, h2)
+                self.swap(b1, b2, h2, h1)
                 self.update_costs(b1, b2, h2, h1)
 
         if shared:
-            self.mst, fc = prim.create_mst(self.connections)
+            self.mst, fc = create_mst(self.connections)
             self.costs = sum(fc)
             print(f"The allocation with shared lines after hill climber costs €{self.costs}")
         else:
             self.mst = None
-            self.costs = current_E
+            self.costs = current_state
             print(f"The allocation with unique lines after hill climber costs €{self.costs}")
 
         if version != None:
@@ -48,84 +48,64 @@ class HillClimber:
             self.version = None
 
         if save:
-            grid = visualise.Grid(self.connections, shared, self.name, self.districtnumber, self.costs, self.mst, self.version, second='hc')
-    
-    def run_shared(self, mst, save, version, k_max=100):
-
-        _, current_Es = prim.create_mst(self.connections)
-        current_E = sum(current_Es) 
-
-        for k in range(k_max):
-            # make random swap
-            b1, b2, h1, h2 = self.get_random_batteries()
-            self.swap(b1, b2, h1, h2)
-
-            _, new_Es = prim.create_mst(self.connections)
-            new_E = sum(new_Es)
-            
-            if not self.is_feasible():
-                new_E += 500 
-
-            if new_E < current_E:
-                current_E = new_E
-    
-            else:
-                self.reverse_swap(b1, b2, h1, h2)
-
-        # final (global) minimum with mst
-        print(f"The cost of the allocation after hill climber is €{current_E}.")
-        self.costs = current_E
-
-        if save:
-            grid = visualise.Grid(self.connections, mst, self.name, self.districtnumber, self.costs, mst=None, version=None, second='hc')
-    
-    def get_random_batteries(self):
-        random_batteries = random.sample(list(self.connections.items()), 2)
-            
-        batt1, houses1 = random_batteries[0]
-        batt2, houses2 = random_batteries[1]
-
-        random_house1 = random.choice(houses1)
-        random_house2 = random.choice(houses2)
-
-        return batt1, batt2, random_house1, random_house2
-
-    def swap(self, batt1, batt2, rh1, rh2):
-        self.connections[batt1].remove(rh1)
-        self.connections[batt2].remove(rh2)
-
-        self.connections[batt1].append(rh2)
-        self.connections[batt2].append(rh1)
-
-    def reverse_swap(self, batt1, batt2, rh1, rh2):
-        self.connections[batt1].remove(rh2)
-        self.connections[batt2].remove(rh1)
-
-        self.connections[batt1].append(rh1)
-        self.connections[batt2].append(rh2)
+            Grid(self.connections, shared, self.name, self.districtnumber, self.costs, self.mst, self.version, second='hc')
 
     def is_feasible(self):
+        """
+        Returns true if allocation is feasible.
+        """
         for battery, houses in self.connections.items():
             total_output = sum([house.output for house in houses])
             if total_output > battery.capacity:
                 return False
         return True
 
-    def get_mhd(self, battery, house):
-        return abs(battery.x - house.x) + abs(battery.y - house.y)
-
     def calculate_costs(self):
+        """
+        Calculates the total costs of the allocation.
+        """
         self.costs = 5000 * len(list(self.connections.keys()))
         for battery, houses in self.connections.items():
             for house in houses:
                 self.costs += 9 * self.get_mhd(battery, house)
+
+    def update_costs(self, b1, b2, h1, h2):
+        """
+        Updates the total costs after swapping two houses.
+        """
+        self.costs -= 9 * self.get_mhd(b1, h1)
+        self.costs -= 9 * self.get_mhd(b2, h2)
+        self.costs += 9 * self.get_mhd(b1, h2)
+        self.costs += 9 * self.get_mhd(b2, h1)
+
         return self.costs
 
-    def update_costs(self, batt1, batt2, house1, house2):
-        # update costs
-        self.costs -= 9 * self.get_mhd(batt1, house1)
-        self.costs -= 9 * self.get_mhd(batt2, house2)
-        self.costs += 9 * self.get_mhd(batt1, house2)
-        self.costs += 9 * self.get_mhd(batt2, house1)
+    def get_mhd(self, battery, house):
+        """
+        Returns the manhattan distance between battery and house.
+        """
+        return abs(battery.x - house.x) + abs(battery.y - house.y)
 
-        return self.costs
+    def get_random_batteries(self):
+        """
+        Returns two random batteries and two random houses.
+        """
+        random_batteries = sample(list(self.connections.items()), 2)
+            
+        b1, hs1 = random_batteries[0]
+        b2, hs2 = random_batteries[1]
+
+        h1 = choice(hs1)
+        h2 = choice(hs2)
+
+        return b1, b2, h1, h2
+
+    def swap(self, b1, b2, h1, h2):
+        """
+        Swaps two houses given their connection to two batteries.
+        """
+        self.connections[b1].remove(h1)
+        self.connections[b2].remove(h2)
+
+        self.connections[b1].append(h2)
+        self.connections[b2].append(h1)

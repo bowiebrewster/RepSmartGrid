@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 
 class Grid:
-
     def __init__(self, connections, shared, name, number, costs, mst, version, second=None):
         self.connections = connections
         self.shared = shared
@@ -48,6 +47,8 @@ class Grid:
             else:
                 plt.savefig(f'figures/{self.name.lower()}/unique/District {self.number} allocation €{self.costs}')
 
+        plt.close()
+
     def show_shared(self):
         for battery in self.connections.keys():
             paths = self.mst[battery]
@@ -66,3 +67,5 @@ class Grid:
                 plt.savefig(f'figures/{self.name.lower()}/version_{self.version}/shared/District {self.number} allocation €{self.costs}')
             else:
                 plt.savefig(f'figures/{self.name.lower()}/shared/District {self.number} allocation €{self.costs}')
+        
+        plt.close()

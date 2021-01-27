@@ -1,4 +1,4 @@
-import time
+from time import time
 import os
 
 from code.classes.district import District
@@ -54,7 +54,7 @@ if __name__ == "__main__":
     else:
         save1 = False
 
-    start1 = time.time()
+    start1 = time()
 
     if version is not None:
         if version == 1:
@@ -64,7 +64,7 @@ if __name__ == "__main__":
     else:
         algo.run(shared1, save1)
 
-    end1 = time.time()
+    end1 = time()
 
     print()
 
@@ -106,23 +106,21 @@ if __name__ == "__main__":
     else:
         save2 = False
 
-    start2 = time.time()
+    start2 = time()
 
     if algo2 == 'hc':
         hc = hillclimber.HillClimber(algo)
         if version is not None:
-            hc.run_unique(shared2, save2, version)
+            hc.run(shared2, save2, version)
         else:
-            hc.run_unique(shared2, save2, None)
+            hc.run(shared2, save2, None)
     else:
         sa = simulatedannealing.SimulatedAnnealing(algo)
         if version is not None:
-            sa.run_unique(0.01, 23, shared2, save2, version)
+            sa.run(0.005, 25.5, shared2, save2, version)
         else:
-            sa.run_unique(0.01, 23, shared2, save2, None)
+            sa.run(0.005, 25.5, shared2, save2, None)
 
-    end2 = time.time()
-
-    # print()
+    end2 = time()
 
     print(f"\nThe second algorithm found a solution in {round(end2 - start2, 2)} seconds.")

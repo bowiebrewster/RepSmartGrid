@@ -1,14 +1,10 @@
-import itertools
-import random
-import copy
-import matplotlib.pyplot as plt
-from code.visualisation import visualise
-from code.shared_lines import prim
+from itertools import permutations
+
+from code.visualisation.visualise import Grid
+from code.shared_lines.prim import create_mst
+
 
 class Greedy:
-    '''
-    The Greedy class that assigns the best possible house to each battery one by one.
-    '''
     def __init__(self, district):
         self.name = 'Greedy'
         self.districtnumber = district.number
@@ -17,24 +13,14 @@ class Greedy:
         self.connections = {battery: [] for battery in self.batteries}
         self.reset()
     
-    def houses_distances(self, battery):
-        return {house: self.get_mhd(battery, house) for house in self.houses if house.is_available}
-
-    def batteries_distances(self, house):
-        return {battery: self.get_mhd(battery, house) for battery in self.batteries if not battery.is_full}
-    
     def run_v1(self, shared, save):
-        '''
-        Per battery in a specific order, the closest houses are allocated 
-        to that specific battery until the battery capacity is maxed out.
-        Then the next battery in the order is chosen to fill up with houses.
-        '''
-
-        all_allocations = {}
-
+        """
+        Per battery in a specific order, the algorithm chooses the closest houses to connect until the battery is full.
+        """
         self.version = 1
+        self.feasible = False
 
-        orderings = list(itertools.permutations(self.batteries, 5))
+        orderings = list(permutations(self.batteries, 5))
         for i, battery_ordering in enumerate(orderings):
             for battery in battery_ordering:
                 distances = self.houses_distances(battery)
@@ -49,35 +35,37 @@ class Greedy:
                     else:
                         battery.is_full = True
 
-            if self.feasible_allocation():
-
-                print("Feasible allocation found!")
+            if self.feasible_allocation() and i == 119:
+                self.feasible = True
 
                 if shared:
-                    self.mst, fc = prim.create_mst(self.connections)
+                    self.mst, fc = create_mst(self.connections)
                     self.costs = sum(fc)
                 else:
                     self.mst = None
 
-                print(f"This allocation costs €{self.costs}.")
+                print(f"Feasible allocation found! This allocation costs €{self.costs}.")
 
-                connections = copy.deepcopy(self.connections)
-                all_allocations[self.costs] = connections
+                # for i, houses in enumerate(self.connections.values()):
+                #     print(i + 1)
+                #     print("----------")
+                #     houses.sort(key=lambda x: x.number)
+                #     for house in houses:
+                #         print(house)
 
                 if save:
-                    grid = visualise.Grid(self.connections, shared, self.name, self.districtnumber, self.costs, self.mst, self.version)
+                    Grid(self.connections, shared, self.name, self.districtnumber, self.costs, self.mst, self.version)
+
+                break
                 
             self.reset()
-        
-        # we move forward with the smallest cost
-        try:
-            self.costs, self.connections = min(all_allocations.items(), key=lambda x: x[0])
-            self.feasible = True
-        except:
-            self.feasible = False
 
     def run_v2(self, shared, save):
+        """
+        With each iteration, the house with the largest output is selected and if possible, connected to the closest battery.
+        """
         self.version = 2
+        self.feasible = False
 
         for i in range(len(self.houses)):
             house_output = {house: house.output for house in self.houses if house.is_available}
@@ -101,33 +89,30 @@ class Greedy:
 
         if self.feasible_allocation():
             self.feasible = True
-            print("Feasible allocation found!")
 
             if shared:
-                self.mst, fc = prim.create_mst(self.connections)
+                self.mst, fc = create_mst(self.connections)
                 self.costs = sum(fc)
             else:
                 self.mst = None
 
-            print(f"This allocation costs €{self.costs}")
+            print(f"Feasible allocation found! This allocation costs €{self.costs}")
 
             if save:
-                grid = visualise.Grid(self.connections, shared, self.name, self.districtnumber, self.costs, self.mst, self.version)
-        else:
-            self.feasible = False
+                Grid(self.connections, shared, self.name, self.districtnumber, self.costs, self.mst, self.version)
 
     def feasible_allocation(self):
+        """
+        Returns true if all 150 houses are allocated to batteries
+        """
         if sum([len(x) for x in self.connections.values()]) == 150: 
             return True
         return False
 
-    def swap(self):
-        # get 2 distinct random batteries
-        # get random house from each 
-        # make swap
-        pass
-
     def reset(self):
+        """
+        Resets costs, house availability, battery capacity and connections.
+        """
         self.costs = 5000 * len(self.batteries)
 
         for house in self.houses:
@@ -140,4 +125,19 @@ class Greedy:
         self.connections = {battery: [] for battery in self.batteries}
 
     def get_mhd(self, battery, house):
+        """
+        Returns the manhattan distance between battery and house.
+        """
         return abs(battery.x - house.x) + abs(battery.y - house.y)
+
+    def houses_distances(self, battery):
+        """
+        Returns a dictionary with key house object and value the manhattan distances between each house and the given battery.
+        """
+        return {house: self.get_mhd(battery, house) for house in self.houses if house.is_available}
+
+    def batteries_distances(self, house):
+        """
+        Returns a dictionary with key battery object and value the manhattan distances between each battery and the given house.
+        """
+        return {battery: self.get_mhd(battery, house) for battery in self.batteries if not battery.is_full}
