@@ -17,7 +17,7 @@ class SimulatedAnnealing:
         Given a cooling rate and start temperature, the simulated annealing algorithm finds a (global) minimum.
         With each temperature, the simulated annealing heuristic considers a random new state and probabilistically decides whether or not to accept this new state.
         """
-        k_max = 1000
+        k_max = 300
         current_temp = start_temp
         current_E = self.costs
 

@@ -69,10 +69,8 @@ if __name__ == "__main__":
 
     end1 = time()
 
-    print()
-
     if algo.feasible:
-        print(f"The algorithm found a solution in {round(end1 - start1, 3)} seconds.\n")
+        print(f"\nThe algorithm found a solution in {round(end1 - start1, 3)} seconds.\n")
     else:
         print(f"The algorithm has found no feasible solution.\n")
         exit()
@@ -120,9 +118,9 @@ if __name__ == "__main__":
     else:
         sa = simulatedannealing.SimulatedAnnealing(algo)
         if version is not None:
-            sa.run(0.001, 30, shared2, save2, version)
+            sa.run(0.005, 30, shared2, save2, version)
         else:
-            sa.run(0.001, 30, shared2, save2, None)
+            sa.run(0.005, 30, shared2, save2, None)
 
     end2 = time()
 
