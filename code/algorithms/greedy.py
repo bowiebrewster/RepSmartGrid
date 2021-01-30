@@ -2,6 +2,7 @@ from itertools import permutations
 
 from code.visualisation.visualise import Grid
 from code.shared_lines.prim import create_mst
+from output.create_output import create_output
 
 
 class Greedy:
@@ -45,6 +46,7 @@ class Greedy:
                     self.mst = None
 
                 print(f"Feasible allocation found! This allocation costs €{self.costs}.")
+                create_output(self.name, self.districtnumber, self.costs, self.connections, shared, self.mst)
 
                 if save:
                     Grid(self.connections, shared, self.name, self.districtnumber, self.costs, self.mst, self.version)
@@ -90,6 +92,7 @@ class Greedy:
                 self.mst = None
 
             print(f"Feasible allocation found! This allocation costs €{self.costs}")
+            create_output(self.name, self.districtnumber, self.costs, self.connections, shared, self.mst)
 
             if save:
                 Grid(self.connections, shared, self.name, self.districtnumber, self.costs, self.mst, self.version)

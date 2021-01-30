@@ -1,4 +1,5 @@
 from code.classes.node import Node
+from output.create_output import get_shared_paths
 from copy import deepcopy
 import matplotlib.pyplot as plt
 
@@ -46,7 +47,7 @@ def create_mst(connections):
             mst[battery].append((x, y))
         
         forest_costs.append(costs)
-            
+
     return mst, forest_costs
 
 def pathfinder(from_node, to_node):

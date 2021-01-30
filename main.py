@@ -7,6 +7,10 @@ from code.visualisation import visualise
 
 
 if __name__ == "__main__":
+    # district = District(2)
+    # algo = random.Random(district)
+    # algo.run(False, False)
+    
     print("Green energy is the energy of the future! A lot of houses have solar panels nowadays.")
     print("Fortunately, these solar panels produce too much energy for one household to handle.")
     print("This excess can be sold back to the supplier, which is stored in batteries.")

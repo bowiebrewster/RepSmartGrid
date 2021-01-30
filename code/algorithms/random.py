@@ -3,6 +3,7 @@ from random import shuffle
 
 from code.visualisation.visualise import Grid
 from code.shared_lines.prim import create_mst
+from output.create_output import create_output
 
 
 class Random:
@@ -34,6 +35,7 @@ class Random:
             self.calculate_costs()
 
         print(f"Feasible allocation found! This allocation costs €{self.costs}.")
+        create_output(self.name, self.districtnumber, self.costs, self.connections, shared, self.mst)
 
         if save:
             Grid(self.connections, shared, self.name, self.districtnumber, self.costs, self.mst, version=None)

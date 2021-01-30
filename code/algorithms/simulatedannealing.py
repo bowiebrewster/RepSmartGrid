@@ -3,6 +3,7 @@ from random import random, sample, choice
 
 from code.visualisation.visualise import Grid
 from code.shared_lines.prim import create_mst
+from output.create_output import create_output
 
 
 class SimulatedAnnealing:
@@ -54,6 +55,8 @@ class SimulatedAnnealing:
             self.version = version
         else:
             self.version = None
+
+        create_output('SA', self.districtnumber, self.costs, self.connections, shared, self.mst)
 
         if save:
             Grid(self.connections, shared, self.name, self.districtnumber, self.costs, self.mst, self.version, second='sa')

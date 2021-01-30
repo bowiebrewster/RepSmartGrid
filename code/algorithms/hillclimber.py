@@ -2,6 +2,7 @@ from random import sample, choice
 
 from code.visualisation.visualise import Grid
 from code.shared_lines.prim import create_mst
+from output.create_output import create_output
 
 
 class HillClimber:
@@ -47,6 +48,8 @@ class HillClimber:
             self.version = version
         else:
             self.version = None
+
+        create_output('HC', self.districtnumber, self.costs, self.connections, shared, self.mst)
 
         if save:
             Grid(self.connections, shared, self.name, self.districtnumber, self.costs, self.mst, self.version, second='hc')
